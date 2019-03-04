@@ -1,2 +1,2 @@
 # RTRMS
-Realtime Tracking for RMS
+Realtime Module Tracking for Reconfigurable Manufacturing Systems
