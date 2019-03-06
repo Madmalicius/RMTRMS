@@ -8,3 +8,4 @@
 !*.md
 !Pipfile
 !Pipfile.lock
+!*.spp
