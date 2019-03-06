@@ -12,18 +12,32 @@ def create_connection(db_file):
     except Error as e:
         print(e)
 
+    return None
+
 
 if __name__ == '__main__':
     conn = create_connection("positions.db")
     curs = conn.cursor()
-    sql = '''CREATE TABLE IF NOT EXISTS position (
-        id INTEGER PRIMARY KEY,
-        name text NOT NULL,
-        positionX REAL NOT NULL,
-        positionY REAL NOT NULL,
-        positionZ REAL NOT NULL,
-        rotation REAL NOT NULL
+    sql = '''
+    CREATE TABLE IF NOT EXISTS position (
+    id INTEGER PRIMARY KEY,
+    name text UNIQUE NOT NULL,
+    positionX FLOAT NOT NULL,
+    positionY FLOAT NOT NULL,
+    positionZ FLOAT NOT NULL,
+    yaw FLOAT NOT NULL
     );
     '''
-    curs.execute(sql)
+    try:
+        curs.execute(sql)
+    except Error as e:
+        print(e)
+
+    sql = '''
+    PRAGMA journal_mode=WAL;
+    '''
+    try:
+        curs.execute(sql)
+    except Error as e:
+        print(e)
     conn.close()
