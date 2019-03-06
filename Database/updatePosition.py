@@ -53,11 +53,11 @@ if __name__ == '__main__':
 
     conn = create_connection("positions.db")
     curs = conn.cursor()
-    for i in range(0, 10):
+    for i in range(0, 10000):
         pose = v.devices["tracker_1"].get_pose_euler()
         x = pose[0]
-        y = pose[1]
-        z = pose[2]
+        z = pose[1]
+        y = pose[2]
         yaw = pose[4]
         print(pose)
         params = {"id": 1,
@@ -68,5 +68,5 @@ if __name__ == '__main__':
                   "yaw": yaw}
         update_position(curs, params)
         conn.commit()
-        time.sleep(1)
+        time.sleep(0.001)
     conn.close()
