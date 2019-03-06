@@ -1,0 +1,29 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "35741519fe89186758e117045072bc771792a07f4ce72991afd133c502e47d28"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.7"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "openvr": {
+            "hashes": [
+                "sha256:19582cd3c8dfc59576e3d2b823cbb412426dd99c19d6c5b6f136093b6407ffb3",
+                "sha256:d84eea0e47d244556a28ab4833df4cb4d436b269ea755311ac0a19e740ad1aff"
+            ],
+            "index": "pypi",
+            "version": "==1.2.1002"
+        }
+    },
+    "develop": {}
+}

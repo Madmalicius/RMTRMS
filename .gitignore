@@ -6,3 +6,5 @@
 !.gitignore
 !*.py
 !*.md
+!Pipfile
+!Pipfile.lock
