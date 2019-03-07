@@ -20,16 +20,21 @@ Once python is installed, use Pip to install pipenv:\
 `python -m pip install pipenv`\
 Clone this repository using Git:\
 `git clone https://github.com/madmalicius/RMTRMS.git`\
-Navigate to the repository: \
-`cd RMTRMS`\
+Navigate to the repository and to the Database folder: \
+`cd RMTRMS/Database`\
 Install the necessary Python packages:\
 `python -m pipenv install`\
 Activate the virtual environment:\
 `python -m pipenv shell`\
 Create the database by running the script:\
-`python Database/createDatabase.py`\
+`python createDatabase.py`
 
-Open the project in Siemen Tecnomatix and allow access to your computer. Double click the PositionDB block and change the file location to the newly created database.
+## Running the program
+
+Open the project in Siemen Tecnomatix and allow access to your computer. Double click the PositionDB block and change the file location to the newly created database. You should also enable "ignore errors" in the debugger tab.\
+Run the updatePosition script:\
+`python updatePosition.py`\
+The position should now be updating and shown in the console. Start the simulation in Tecnomatix.
 
 ## Setting up SteamVR to run HMD-less
 
@@ -40,12 +45,17 @@ Modify the following files:
 
 - drivers / default.vrsettings
   (Directory>/steamapps/common/SteamVR/drivers/null/resources/settings/default.vrsettings)\
-  enable = true
+  Change the following lines:\
+  "enable" : true
 
 - resources / default.vrsettings
   (<Steam Directory>/steamapps/common/SteamVR/resources/settings/default.vrsettings)\
-  requireHmd = false\
-  forcedDriver = null\
-  activateMultipleDrivers = true
+  Change the following lines:\
+  "requireHmd" : false\
+  "forcedDriver" : "null"\
+  "activateMultipleDrivers" : true
 
 After this, you should be able to unplug the headset and box and run SteamVR using only the tracker and accompanying dongle.
+
+<b>NOTE</b>\
+SteamVR may give errors such as "Compositor is not running", "room setup is invalid", but these will not effect the system.
