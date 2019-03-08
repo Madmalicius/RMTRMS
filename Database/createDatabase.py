@@ -25,7 +25,9 @@ if __name__ == "__main__":
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
     positionZ FLOAT NOT NULL,
-    yaw FLOAT NOT NULL
+    yaw FLOAT NOT NULL,
+    pitch FLOAT NOT NULL,
+    roll FLOAT NOT NULL
     );
     """
     try:

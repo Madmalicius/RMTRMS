@@ -24,7 +24,9 @@ def update_position(curs, params):
 UPDATE OR IGNORE position SET positionX=:positionX, 
                     positionY=:positionY, 
                     positionZ=:positionZ,
-                    yaw=:yaw
+                    yaw=:yaw,
+                    pitch=:pitch,
+                    roll=:roll
 WHERE name = :name;
 """
 
@@ -38,8 +40,10 @@ INSERT or IGNORE INTO position (name,
                                 positionX, 
                                 positionY, 
                                 positionZ, 
-                                yaw)
-VALUES(:name, :positionX, :positionY, :positionZ, :yaw);
+                                yaw,
+                                pitch,
+                                roll)
+VALUES(:name, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
     """
     try:
         curs.execute(sql, params)
@@ -58,7 +62,9 @@ if __name__ == "__main__":
         x = pose[0]
         z = pose[1]
         y = pose[2]
-        yaw = pose[4]
+        yaw = pose[3]
+        pitch = pose[4]
+        roll = pose[5]
         print(pose)
         params = {
             "id": 1,
@@ -67,6 +73,8 @@ if __name__ == "__main__":
             "positionY": y,
             "positionZ": z,
             "yaw": yaw,
+            "pitch": pitch,
+            "roll": roll,
         }
         update_position(curs, params)
         conn.commit()
