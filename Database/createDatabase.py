@@ -15,10 +15,10 @@ def create_connection(db_file):
     return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     conn = create_connection("positions.db")
     curs = conn.cursor()
-    sql = '''
+    sql = """
     CREATE TABLE IF NOT EXISTS position (
     id INTEGER PRIMARY KEY,
     name text UNIQUE NOT NULL,
@@ -27,15 +27,15 @@ if __name__ == '__main__':
     positionZ FLOAT NOT NULL,
     yaw FLOAT NOT NULL
     );
-    '''
+    """
     try:
         curs.execute(sql)
     except Error as e:
         print(e)
 
-    sql = '''
+    sql = """
     PRAGMA journal_mode=WAL;
-    '''
+    """
     try:
         curs.execute(sql)
     except Error as e:

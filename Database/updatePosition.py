@@ -20,27 +20,27 @@ def create_connection(db_file):
 
 def update_position(curs, params):
 
-    sql = '''
+    sql = """
 UPDATE OR IGNORE position SET positionX=:positionX, 
                     positionY=:positionY, 
                     positionZ=:positionZ,
                     yaw=:yaw
 WHERE name = :name;
-'''
+"""
 
     try:
         curs.execute(sql, params)
     except Error as e:
         print(e)
 
-    sql = '''
+    sql = """
 INSERT or IGNORE INTO position (name, 
                                 positionX, 
                                 positionY, 
                                 positionZ, 
                                 yaw)
 VALUES(:name, :positionX, :positionY, :positionZ, :yaw);
-    '''
+    """
     try:
         curs.execute(sql, params)
     except Error as e:
@@ -49,7 +49,7 @@ VALUES(:name, :positionX, :positionY, :positionZ, :yaw);
     return curs.lastrowid
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     conn = create_connection("positions.db")
     curs = conn.cursor()
@@ -60,12 +60,14 @@ if __name__ == '__main__':
         y = pose[2]
         yaw = pose[4]
         print(pose)
-        params = {"id": 1,
-                  "name": "Machine 1",
-                  "positionX": x,
-                  "positionY": y,
-                  "positionZ": z,
-                  "yaw": yaw}
+        params = {
+            "id": 1,
+            "name": "Machine 1",
+            "positionX": x,
+            "positionY": y,
+            "positionZ": z,
+            "yaw": yaw,
+        }
         update_position(curs, params)
         conn.commit()
         time.sleep(0.001)
