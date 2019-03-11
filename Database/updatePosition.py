@@ -27,7 +27,7 @@ UPDATE OR IGNORE position SET positionX=:positionX,
                     yaw=:yaw,
                     pitch=:pitch,
                     roll=:roll
-WHERE name = :name;
+WHERE serial = :serial;
 """
 
     try:
@@ -36,14 +36,15 @@ WHERE name = :name;
         print(e)
 
     sql = """
-INSERT or IGNORE INTO position (name, 
+INSERT or IGNORE INTO position (name,
+                                serial,
                                 positionX, 
                                 positionY, 
                                 positionZ, 
                                 yaw,
                                 pitch,
                                 roll)
-VALUES(:name, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
+VALUES(:name, :serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
     """
     try:
         curs.execute(sql, params)
@@ -65,10 +66,11 @@ if __name__ == "__main__":
         yaw = pose[3]
         pitch = pose[4]
         roll = pose[5]
-        print(pose)
+        serial = v.devices["tracker_1"].get_serial()
+        print(serial + pose)
         params = {
-            "id": 1,
             "name": "Machine 1",
+            "serial": serial,
             "positionX": x,
             "positionY": y,
             "positionZ": z,
