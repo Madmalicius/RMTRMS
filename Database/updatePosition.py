@@ -58,6 +58,8 @@ if __name__ == "__main__":
 
     conn = create_connection("positions.db")
     curs = conn.cursor()
+    serial = v.devices["tracker_1"].get_serial()
+    print(serial)
     for i in range(0, 10000):
         pose = v.devices["tracker_1"].get_pose_euler()
         x = pose[0]
@@ -66,8 +68,7 @@ if __name__ == "__main__":
         yaw = pose[3]
         pitch = pose[4]
         roll = pose[5]
-        serial = v.devices["tracker_1"].get_serial()
-        print(serial + pose)
+        print(pose)
         params = {
             "name": "Machine 1",
             "serial": serial,
