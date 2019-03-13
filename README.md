@@ -48,9 +48,9 @@ Modify the following files:
   Change the following lines:\
   "enable" : true
 
-- resources / default.vrsettings
-  (<Steam Directory>/steamapps/common/SteamVR/resources/settings/default.vrsettings)\
-  Change the following lines:\
+- resources / steamVR.vrsettings
+  (<Steam Directory>/config/steamvr.vrsettings)\
+  Add the following lines under the "steamvr" section:\
   "requireHmd" : false\
   "forcedDriver" : "null"\
   "activateMultipleDrivers" : true
