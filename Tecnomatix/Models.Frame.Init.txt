@@ -1,33 +1,33 @@
 var i:integer;
 var x:real;
 var y:real;
+var z:real;
 var yaw:real;
+var pitch:real;
+var roll:real;
 
-.Models.Frame.PositionDB.open;
-	
+.Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Database\positions.db"); -- Choose path to database file
 .Models.Frame.PositionDB.prepare("SELECT * FROM position");
-.Models.Frame.TableFile.delete;
-
-.Models.Frame.TableFile.setDataType(3, "string");
-.Models.Frame.TableFile.setDataType(4, "string");
+	.Models.Frame.TableFile.delete;
+	.Models.Frame.TableFile.setDataType(3, "string");
+	.Models.Frame.TableFile.setDataType(4, "string");
+		
+	while .Models.Frame.PositionDB.step loop
+		for i := 0 to .Models.Frame.PositionDB.getColumnCount-1	loop
+			if i = 0 then
+				.Models.Frame.TableFile[1, .Models.Frame.TableFile.yDim+1] := .Models.Frame.PositionDB.getColumnString(i);
+			else
+				.Models.Frame.TableFile[i+1, .Models.Frame.TableFile.yDim] := .Models.Frame.PositionDB.getColumnString(i);
+			end;
+		next;
+	end;
+	.Models.Frame.PositionDB.finalize;
 	
-while .Models.Frame.PositionDB.step loop
-	for i := 0 to .Models.Frame.PositionDB.getColumnCount-1	loop
-		if i = 0 then
-			.Models.Frame.TableFile[1, .Models.Frame.TableFile.yDim+1] := .Models.Frame.PositionDB.getColumnString(i);
-		else
-			.Models.Frame.TableFile[i+1, .Models.Frame.TableFile.yDim] := .Models.Frame.PositionDB.getColumnString(i);
-		end;
-	next;
-end;
-.Models.Frame.PositionDB.finalize;
-.Models.Frame.PositionDB.close;
-
-x := 10*str_to_num(.Models.Frame.TableFile[3, 1]);
-y := 10*str_to_num(.Models.Frame.TableFile[4, 1]);
-yaw := str_to_num(.Models.Frame.TableFile[6, 1]);
+x := str_to_num(.Models.Frame.TableFile[4, 1]);
+y := -str_to_num(.Models.Frame.TableFile[5, 1]);  --flipped y-coordinate to match testing room
+yaw := str_to_num(.Models.Frame.TableFile[8, 1]);
 
 print yaw;
 
-.Models.Frame.SingleProc._3D.Position := makeArray(x, y, 0);
-.Models.Frame.SingleProc._3D.Rotation := makeArray(yaw, 0, 0, -1);
+.Models.Frame.RobotModule._3D.Position := makeArray(x, y, 0);
+.Models.Frame.RobotModule._3D.Rotation := makeArray(yaw, 0, 0, -1);

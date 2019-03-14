@@ -58,29 +58,30 @@ if __name__ == "__main__":
 
     conn = create_connection("positions.db")
     curs = conn.cursor()
-    for device in vr.devices:
-        if "tracker" not in device:
-            continue
-        serial = vr.devices[device].get_serial()
-        pose = vr.devices[device].get_pose_euler()
-        x = pose[0]
-        z = pose[1]
-        y = pose[2]
-        yaw = pose[3]
-        pitch = pose[4]
-        roll = pose[5]
-        params = {
-            "name": "Machine 1",
-            "serial": serial,
-            "positionX": x,
-            "positionY": y,
-            "positionZ": z,
-            "yaw": yaw,
-            "pitch": pitch,
-            "roll": roll,
-        }
-        update_position(curs, params)
-        conn.commit()
-        print("updated " + serial)
-        vr.vr.triggerHapticPulse(vr.devices[device].index, 0, 1000)
+    curs.execute("PRAGMA main.synchronous=NORMAL")
+    for i in range(0, 1000000):
+        for device in vr.devices:
+            if "tracker" not in device:
+                continue
+            serial = vr.devices[device].get_serial()
+            pose = vr.devices[device].get_pose_euler()
+            x = pose[0]
+            z = pose[1]
+            y = pose[2]
+            yaw = pose[3]
+            pitch = pose[4]
+            roll = pose[5]
+            params = {
+                "serial": serial,
+                "positionX": x,
+                "positionY": y,
+                "positionZ": z,
+                "yaw": yaw,
+                "pitch": pitch,
+                "roll": roll,
+            }
+            update_position(curs, params)
+            conn.commit()
+            print("updated " + serial)
+            time.sleep(0.01)
     conn.close()
