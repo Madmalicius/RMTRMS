@@ -3,9 +3,6 @@ from sqlite3 import Error
 import triad_openvr
 import time
 
-v = triad_openvr.triad_openvr()
-v.print_discovered_objects()
-
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -21,7 +18,7 @@ def create_connection(db_file):
 def update_position(curs, params):
 
     sql = """
-UPDATE OR IGNORE position SET positionX=:positionX, 
+UPDATE or IGNORE position SET positionX=:positionX, 
                     positionY=:positionY, 
                     positionZ=:positionZ,
                     yaw=:yaw,
@@ -44,7 +41,7 @@ INSERT or IGNORE INTO position (name,
                                 yaw,
                                 pitch,
                                 roll)
-VALUES(:name, :serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
+VALUES("MachineName", :serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
     """
     try:
         curs.execute(sql, params)
@@ -56,19 +53,22 @@ VALUES(:name, :serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
 
 if __name__ == "__main__":
 
+    vr = triad_openvr.triad_openvr()
+    vr.print_discovered_objects()
+
     conn = create_connection("positions.db")
     curs = conn.cursor()
-    serial = v.devices["tracker_1"].get_serial()
-    print(serial)
-    for i in range(0, 10000):
-        pose = v.devices["tracker_1"].get_pose_euler()
+    for device in vr.devices:
+        if "tracker" not in device:
+            continue
+        serial = vr.devices[device].get_serial()
+        pose = vr.devices[device].get_pose_euler()
         x = pose[0]
         z = pose[1]
         y = pose[2]
         yaw = pose[3]
         pitch = pose[4]
         roll = pose[5]
-        print(pose)
         params = {
             "name": "Machine 1",
             "serial": serial,
@@ -81,5 +81,6 @@ if __name__ == "__main__":
         }
         update_position(curs, params)
         conn.commit()
-        time.sleep(0.001)
+        print("updated " + serial)
+        vr.vr.triggerHapticPulse(vr.devices[device].index, 0, 1000)
     conn.close()

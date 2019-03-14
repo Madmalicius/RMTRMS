@@ -21,7 +21,7 @@ if __name__ == "__main__":
     sql = """
     CREATE TABLE IF NOT EXISTS position (
     id INTEGER PRIMARY KEY,
-    name text UNIQUE NOT NULL,
+    name text NOT NULL,
     serial text UNIQUE NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
