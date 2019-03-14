@@ -58,9 +58,10 @@ if __name__ == "__main__":
 
     conn = create_connection("positions.db")
     curs = conn.cursor()
+    curs.execute("PRAGMA main.synchronous=NORMAL")
     serial = v.devices["tracker_1"].get_serial()
     print(serial)
-    for i in range(0, 10000):
+    for i in range(0, 1000000):
         pose = v.devices["tracker_1"].get_pose_euler()
         x = pose[0]
         z = pose[1]
@@ -81,5 +82,5 @@ if __name__ == "__main__":
         }
         update_position(curs, params)
         conn.commit()
-        time.sleep(0.001)
+        time.sleep(0.01)
     conn.close()
