@@ -56,6 +56,11 @@ VALUES("MachineName", :serial, :positionX, :positionY, :positionZ, :yaw, :pitch,
     return curs.lastrowid
 
 
+def exit_program(conn):
+    conn.close()
+    exit()
+
+
 if __name__ == "__main__":
 
     vr = triad_openvr.triad_openvr()
@@ -66,7 +71,14 @@ if __name__ == "__main__":
     conn = create_connection(databasePath)
     curs = conn.cursor()
     curs.execute("PRAGMA main.synchronous=NORMAL")
-    for i in range(0, 1000000):
+
+    try:
+        curs.execute("UPDATE terminate SET close=0 WHERE id=1")
+        conn.commit()
+    except Error as e:
+        print(e)
+
+    while True:
         for device in vr.devices:
             if "tracker" not in device:
                 continue
@@ -91,4 +103,6 @@ if __name__ == "__main__":
             conn.commit()
             print("updated " + serial)
             time.sleep(0.01)
-    conn.close()
+
+        if curs.execute("SELECT close FROM terminate").fetchone()[0]:
+            exit_program(conn)

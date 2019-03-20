@@ -16,10 +16,10 @@ def create_connection(db_file):
 
 
 if __name__ == "__main__":
-    conn = create_connection("positions.db")
+    conn = create_connection("Modules.db")
     curs = conn.cursor()
     sql = """
-    CREATE TABLE IF NOT EXISTS position (
+    CREATE TABLE IF NOT EXISTS positionIn (
     id INTEGER PRIMARY KEY,
     name text NOT NULL,
     serial text UNIQUE NOT NULL,
@@ -43,4 +43,40 @@ if __name__ == "__main__":
         curs.execute(sql)
     except Error as e:
         print(e)
+
+    sql = """
+    CREATE TABLE IF NOT EXISTS positionOut (
+    id INTEGER PRIMARY KEY,
+    name text NOT NULL,
+    serial text UNIQUE NOT NULL,
+    positionX FLOAT NOT NULL,
+    positionY FLOAT NOT NULL,
+    positionZ FLOAT NOT NULL,
+    yaw FLOAT NOT NULL,
+    pitch FLOAT NOT NULL,
+    roll FLOAT NOT NULL
+    );
+    """
+    try:
+        curs.execute(sql)
+    except Error as e:
+        print(e)
+
+    sql = """
+    CREATE TABLE IF NOT EXISTS terminate (
+    id INTEGER PRIMARY KEY,
+    close BIT NOT NULL
+    );
+    """
+    try:
+        curs.execute(sql)
+    except Error as e:
+        print(e)
+
+    try:
+        curs.execute("INSERT INTO terminate (close) VALUES (0)")
+    except Error as e:
+        print(e)
+
+    conn.commit()
     conn.close()
