@@ -56,8 +56,9 @@ VALUES("MachineName", :serial, :positionX, :positionY, :positionZ, :yaw, :pitch,
     return curs.lastrowid
 
 
-def exit_program(conn):
-    conn.close()
+def exit_program(conn=None):
+    if conn is not None:
+        conn.close()
     exit()
 
 
@@ -67,6 +68,9 @@ if __name__ == "__main__":
     vr.print_discovered_objects()
 
     databasePath = filedialog.askopenfilename()
+    print(databasePath)
+    if databasePath is "":
+        exit_program()
 
     conn = create_connection(databasePath)
     curs = conn.cursor()
