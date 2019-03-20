@@ -43,13 +43,11 @@ The position should now be updating and shown in the console. Start the simulati
 Run SteamVR and set up your playspace as normal. After this is done, close SteamVR.\
 Modify the following files:
 
-- drivers / default.vrsettings
-  (Directory>/steamapps/common/SteamVR/drivers/null/resources/settings/default.vrsettings)\
+- (<Steam Directory>/steamapps/common/SteamVR/drivers/null/resources/settings/default.vrsettings)\
   Change the following lines:\
   "enable" : true
 
-- resources / steamVR.vrsettings
-  (<Steam Directory>/config/steamvr.vrsettings)\
+- (<Steam Directory>/config/steamvr.vrsettings)\
   Add the following lines under the "steamvr" section:\
   "requireHmd" : false\
   "forcedDriver" : "null"\
