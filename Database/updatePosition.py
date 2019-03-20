@@ -61,7 +61,7 @@ if __name__ == "__main__":
     vr = triad_openvr.triad_openvr()
     vr.print_discovered_objects()
 
-    databasePath = tk.filedialog.askopenfilename()
+    databasePath = filedialog.askopenfilename()
 
     conn = create_connection(databasePath)
     curs = conn.cursor()
