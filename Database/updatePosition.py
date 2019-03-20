@@ -2,6 +2,11 @@ import sqlite3
 from sqlite3 import Error
 import triad_openvr
 import time
+import tkinter as tk
+from tkinter import filedialog
+
+root = tk.Tk("Select Database file")
+root.withdraw()
 
 
 def create_connection(db_file):
@@ -56,7 +61,9 @@ if __name__ == "__main__":
     vr = triad_openvr.triad_openvr()
     vr.print_discovered_objects()
 
-    conn = create_connection("positions.db")
+    databasePath = tk.filedialog.askopenfilename()
+
+    conn = create_connection(databasePath)
     curs = conn.cursor()
     curs.execute("PRAGMA main.synchronous=NORMAL")
     for i in range(0, 1000000):
