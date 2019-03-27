@@ -68,7 +68,6 @@ if __name__ == "__main__":
     vr.print_discovered_objects()
 
     databasePath = filedialog.askopenfilename()
-    print(databasePath)
     if databasePath is "":
         exit_program()
 
