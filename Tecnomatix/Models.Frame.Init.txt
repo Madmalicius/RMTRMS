@@ -1,13 +1,11 @@
-var i:integer;
-var x:real;
-var y:real;
-var z:real;
-var yaw:real;
-var pitch:real;
-var roll:real;
+var i,row:integer;
+var x1,x2:real;
+var y1,y2:real;
+var yaw1,yaw2:real;
 
-.Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Database\positions.db"); -- Choose path to database file
-.Models.Frame.PositionDB.prepare("SELECT * FROM position");
+
+.Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db"); -- Choose path to database file
+.Models.Frame.PositionDB.prepare("SELECT * FROM positionIn");
 	.Models.Frame.TableFile.delete;
 	.Models.Frame.TableFile.setDataType(3, "string");
 	.Models.Frame.TableFile.setDataType(4, "string");
@@ -22,12 +20,23 @@ var roll:real;
 		next;
 	end;
 	.Models.Frame.PositionDB.finalize;
-	
-x := str_to_num(.Models.Frame.TableFile[4, 1]);
-y := -str_to_num(.Models.Frame.TableFile[5, 1]);  --flipped y-coordinate to match testing room
-yaw := str_to_num(.Models.Frame.TableFile[8, 1]);
 
-print yaw;
+x1 := str_to_num(.Models.Frame.TableFile[4, 1]);
+y1 := -str_to_num(.Models.Frame.TableFile[5, 1]);  --flipped y-coordinate to match testing room
+yaw1 := str_to_num(.Models.Frame.TableFile[8, 1]);
 
-.Models.Frame.RobotModule._3D.Position := makeArray(x, y, 0);
-.Models.Frame.RobotModule._3D.Rotation := makeArray(yaw, 0, 0, -1);
+.Models.Frame.TableFile.setCursor(1,1);
+if .Models.Frame.TableFile.find({3,1}, {3,*}, "LHR-48F4213B") then
+	row := .Models.Frame.TableFile.cursorY;
+	x2 := str_to_num(.Models.Frame.TableFile[4, row]);
+	y2 := -str_to_num(.Models.Frame.TableFile[5, row]);  --flipped y-coordinate to match testing room
+	yaw2 := str_to_num(.Models.Frame.TableFile[8, row]);
+end;
+
+print yaw2;
+
+--.Models.Frame.RobotModule1._3D.Position := makeArray(x1, y1, 0);
+--.Models.Frame.RobotModule1._3D.Rotation := makeArray(yaw1, 0, 0, -1);
+
+.Models.Frame.RobotModule2._3D.Position := makeArray(x2, y2, 0);
+.Models.Frame.RobotModule2._3D.Rotation := makeArray(yaw2, 0, 0, -1);
