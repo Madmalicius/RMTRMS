@@ -21,8 +21,8 @@ if __name__ == "__main__":
     sql = """
     CREATE TABLE IF NOT EXISTS positionIn (
     id INTEGER PRIMARY KEY,
-    name text NOT NULL,
-    serial text UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    serial TEXT UNIQUE NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
     positionZ FLOAT NOT NULL,
@@ -47,14 +47,26 @@ if __name__ == "__main__":
     sql = """
     CREATE TABLE IF NOT EXISTS positionOut (
     id INTEGER PRIMARY KEY,
-    name text NOT NULL,
-    serial text UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    serial TEXT UNIQUE NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
     positionZ FLOAT NOT NULL,
     yaw FLOAT NOT NULL,
     pitch FLOAT NOT NULL,
     roll FLOAT NOT NULL
+    );
+    """
+    try:
+        curs.execute(sql)
+    except Error as e:
+        print(e)
+
+    sql = """
+    CREATE TABLE IF NOT EXISTS modules (
+    id INTEGER PRIMARY KEY,
+    machine TEXT UNIQUE NOT NULL,
+    tracker TEXT UNIQUE
     );
     """
     try:
