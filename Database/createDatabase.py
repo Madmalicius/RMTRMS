@@ -15,8 +15,8 @@ def create_connection(db_file):
     return None
 
 
-if __name__ == "__main__":
-    conn = create_connection("Modules.db")
+def create_database(path="Modules.db"):
+    conn = create_connection(path)
     curs = conn.cursor()
     sql = """
     CREATE TABLE IF NOT EXISTS positionIn (
@@ -92,3 +92,7 @@ if __name__ == "__main__":
 
     conn.commit()
     conn.close()
+
+
+if __name__ == "__main__":
+    create_database()
