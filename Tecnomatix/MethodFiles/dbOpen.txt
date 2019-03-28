@@ -1,0 +1,7 @@
+.Models.Frame.PositionDB.open();
+
+.Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db");
+.Models.Frame.listModules;
+.Models.Frame.PositionDB.saveToFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db");
+
+startExtProc("powershell.exe /C pipenv run python 'C:\\Users\\Madmal\\Documents\\Uni\\6th Semester\\Bachelor\\RMTRMS\\Database\\updatePosition.py'", true, false);
