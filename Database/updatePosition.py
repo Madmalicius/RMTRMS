@@ -83,13 +83,14 @@ if __name__ == "__main__":
 
     trackerCount = 0
     while trackerCount is 0:
-        print("Searching for trackers\r\n")
+        print("Searching for trackers\r")
         vr.update_device_list()
         for device in vr.devices:
             if "tracker" not in device:
                 continue
             else:
                 trackerCount += 1
+    print("\nTrackers found!\n\n")
 
     while True:
         for device in vr.devices:

@@ -154,36 +154,6 @@ class triad_openvr:
         poses = self.vr.getDeviceToAbsoluteTrackingPose(
             openvr.TrackingUniverseStanding, 0, openvr.k_unMaxTrackedDeviceCount
         )
-        # Iterate through the pose list to find the active devices and determine their type
-        for i in range(openvr.k_unMaxTrackedDeviceCount):
-            if poses[i].bPoseIsValid:
-                device_class = self.vr.getTrackedDeviceClass(i)
-                if device_class == openvr.TrackedDeviceClass_Controller:
-                    device_name = "controller_" + str(
-                        len(self.object_names["Controller"]) + 1
-                    )
-                    self.object_names["Controller"].append(device_name)
-                    self.devices[device_name] = vr_tracked_device(
-                        self.vr, i, "Controller"
-                    )
-                elif device_class == openvr.TrackedDeviceClass_HMD:
-                    device_name = "hmd_" + str(len(self.object_names["HMD"]) + 1)
-                    self.object_names["HMD"].append(device_name)
-                    self.devices[device_name] = vr_tracked_device(self.vr, i, "HMD")
-                elif device_class == openvr.TrackedDeviceClass_GenericTracker:
-                    device_name = "tracker_" + str(
-                        len(self.object_names["Tracker"]) + 1
-                    )
-                    self.object_names["Tracker"].append(device_name)
-                    self.devices[device_name] = vr_tracked_device(self.vr, i, "Tracker")
-                elif device_class == openvr.TrackedDeviceClass_TrackingReference:
-                    device_name = "tracking_reference_" + str(
-                        len(self.object_names["Tracking Reference"]) + 1
-                    )
-                    self.object_names["Tracking Reference"].append(device_name)
-                    self.devices[device_name] = vr_tracking_reference(
-                        self.vr, i, "Tracking Reference"
-                    )
 
     def rename_device(self, old_device_name, new_device_name):
         self.devices[new_device_name] = self.devices.pop(old_device_name)
