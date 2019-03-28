@@ -23,7 +23,7 @@ def create_connection(db_file):
 def update_position(curs, params):
 
     sql = """
-UPDATE or IGNORE position SET positionX=:positionX, 
+UPDATE or IGNORE positionIn SET positionX=:positionX, 
                     positionY=:positionY, 
                     positionZ=:positionZ,
                     yaw=:yaw,
@@ -38,7 +38,7 @@ WHERE serial = :serial;
         print(e)
 
     sql = """
-INSERT or IGNORE INTO position (name,
+INSERT or IGNORE INTO positionIn (name,
                                 serial,
                                 positionX, 
                                 positionY, 
@@ -68,7 +68,6 @@ if __name__ == "__main__":
     vr.print_discovered_objects()
 
     databasePath = filedialog.askopenfilename()
-    print(databasePath)
     if databasePath is "":
         exit_program()
 
