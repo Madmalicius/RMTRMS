@@ -65,7 +65,7 @@ if __name__ == "__main__":
     sql = """
     CREATE TABLE IF NOT EXISTS modules (
     id INTEGER PRIMARY KEY,
-    machine TEXT UNIQUE NOT NULL,
+    module TEXT UNIQUE NOT NULL,
     tracker TEXT UNIQUE
     );
     """
