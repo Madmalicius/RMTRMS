@@ -4,6 +4,7 @@ import triad_openvr
 import time
 import tkinter as tk
 from tkinter import filedialog
+import configparser
 
 root = tk.Tk("Select Database file")
 root.withdraw()
@@ -67,9 +68,19 @@ if __name__ == "__main__":
     vr = triad_openvr.triad_openvr()
     vr.print_discovered_objects()
 
-    databasePath = filedialog.askopenfilename()
-    if databasePath is "":
-        exit_program()
+    config = configparser.ConfigParser()
+    try:
+        config.read("config")
+        databasePath = config.get("database", "path")
+    except configparser.NoSectionError:
+        databasePath = filedialog.askopenfilename()
+        if databasePath is "":
+            exit_program()
+        config.add_section("database")
+        config.set("database", "path", databasePath)
+
+    with open("config", "w") as f:
+        config.write(f)
 
     conn = create_connection(databasePath)
     curs = conn.cursor()
