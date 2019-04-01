@@ -82,7 +82,7 @@ User Objects
 
 The content of the method files can be found under [MethodFiles](/Tecnomatix/MethodFiles).
 
-Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. double-click `Drain` and under control>Entrance select `moveModules`. In methods `dbOpen`, `dbClose` and `moveModules` change the path of commands where instructed.
+Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. double-click `Drain` and under _control>Entrance_ select `moveModules`. In methods `dbOpen`, `dbClose` and `moveModules` change the path of commands where instructed.
 
 Lastly, click the _Home>Navigate>Open 2D/3D_ button.
 
