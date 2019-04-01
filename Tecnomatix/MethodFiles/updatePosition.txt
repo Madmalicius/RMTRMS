@@ -1,0 +1,15 @@
+var i:integer;
+
+.Models.Frame.PositionDB.prepare("SELECT * FROM positionIn");
+	.Models.Frame.trackerPosition.delete;
+		
+	while .Models.Frame.PositionDB.step loop
+		for i := 0 to .Models.Frame.PositionDB.getColumnCount-1	loop
+			if i = 0 then
+				.Models.Frame.trackerPosition[1, .Models.Frame.trackerPosition.yDim+1] := .Models.Frame.PositionDB.getColumnString(i);
+			else
+				.Models.Frame.trackerPosition[i+1, .Models.Frame.trackerPosition.yDim] := .Models.Frame.PositionDB.getColumnString(i);
+			end;
+		next;
+	end;
+	.Models.Frame.PositionDB.finalize;

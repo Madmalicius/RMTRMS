@@ -1,0 +1,19 @@
+var moduleList:list[object];
+var sql,module:string;
+moduleList.create;
+
+for var i := 1 to .Models.Frame.numNodes
+	if .Models.Frame.node(i).class = .UserObjects.Frame then
+		moduleList.append(.models.Frame.Node(i));
+	end
+next
+
+for var i := 1 to 1000 
+	if moduleList[i] = VOID then
+		exitLoop;
+	else
+		module := moduleList[i].name;
+		sql := "INSERT or IGNORE INTO modules (module) VALUES (\"" + module + "\")"
+		.Models.Frame.PositionDB.exec(sql);
+	end
+next

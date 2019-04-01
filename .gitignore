@@ -10,3 +10,4 @@
 !Pipfile.lock
 !*.spp
 !*.jt
+!*.txt
