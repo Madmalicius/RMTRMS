@@ -5,9 +5,9 @@ import time
 import tkinter as tk
 from tkinter import filedialog
 import configparser
+import time
 
-root = tk.Tk("Select Database file")
-root.withdraw()
+vr = triad_openvr.triad_openvr()
 
 
 def create_connection(db_file):
@@ -21,7 +21,7 @@ def create_connection(db_file):
     return None
 
 
-def update_position(curs, params):
+def update_position_db(curs, params):
 
     sql = """
 UPDATE or IGNORE positionIn SET positionX=:positionX, 
@@ -57,6 +57,49 @@ VALUES("MachineName", :serial, :positionX, :positionY, :positionZ, :yaw, :pitch,
     return curs.lastrowid
 
 
+def update_position(conn, curs):
+    for device in vr.devices:
+        if "tracker" not in device:
+            continue
+        serial = vr.devices[device].get_serial()
+        pose = vr.devices[device].get_pose_euler()
+        x = pose[0]
+        z = pose[1]
+        y = pose[2]
+        yaw = pose[3]
+        pitch = pose[4]
+        roll = pose[5]
+        params = {
+            "serial": serial,
+            "positionX": x,
+            "positionY": y,
+            "positionZ": z,
+            "yaw": yaw,
+            "pitch": pitch,
+            "roll": roll,
+        }
+        update_position_db(curs, params)
+        conn.commit()
+        print("updated " + serial)
+        time.sleep(0.01)
+
+
+def search_for_tracker():
+    trackerCount, searchCount = 0, 0
+    while trackerCount is 0 and searchCount < 5000:
+        print("\rSearching for trackers", end="")
+        vr.update_device_list()
+        for device in vr.devices:
+            if "tracker" not in device:
+                searchCount += 1
+                time.sleep(0.001)
+                continue
+            else:
+                trackerCount += 1
+    print("\n\n")
+    return trackerCount
+
+
 def exit_program(conn=None):
     if conn is not None:
         conn.close()
@@ -64,8 +107,9 @@ def exit_program(conn=None):
 
 
 if __name__ == "__main__":
+    root = tk.Tk("Select Database file")
+    root.withdraw()
 
-    vr = triad_openvr.triad_openvr()
     vr.print_discovered_objects()
 
     config = configparser.ConfigParser()
@@ -92,42 +136,11 @@ if __name__ == "__main__":
     except Error as e:
         print(e)
 
-    trackerCount = 0
-    while trackerCount is 0:
-        print("\rSearching for trackers", end="")
-        vr.update_device_list()
-        for device in vr.devices:
-            if "tracker" not in device:
-                continue
-            else:
-                trackerCount += 1
-    print("\nTrackers found!\n\n")
+    trackerCount = search_for_tracker()
+    print("Found ", trackerCount, " trackers")
 
     while True:
-        for device in vr.devices:
-            if "tracker" not in device:
-                continue
-            serial = vr.devices[device].get_serial()
-            pose = vr.devices[device].get_pose_euler()
-            x = pose[0]
-            z = pose[1]
-            y = pose[2]
-            yaw = pose[3]
-            pitch = pose[4]
-            roll = pose[5]
-            params = {
-                "serial": serial,
-                "positionX": x,
-                "positionY": y,
-                "positionZ": z,
-                "yaw": yaw,
-                "pitch": pitch,
-                "roll": roll,
-            }
-            update_position(curs, params)
-            conn.commit()
-            print("updated " + serial)
-            time.sleep(0.01)
 
+        update_position(conn, curs)
         if curs.execute("SELECT close FROM terminate").fetchone()[0]:
             exit_program(conn)
