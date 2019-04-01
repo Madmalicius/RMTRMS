@@ -21,7 +21,7 @@ def create_database(path="Modules.db"):
     sql = """
     CREATE TABLE IF NOT EXISTS positionIn (
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
+    name TEXT,
     serial TEXT UNIQUE NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,

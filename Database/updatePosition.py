@@ -24,7 +24,7 @@ def create_connection(db_file):
 def update_position_db(curs, params):
 
     sql = """
-UPDATE or IGNORE positionIn SET positionX=:positionX, 
+UPDATE positionIn SET positionX=:positionX, 
                     positionY=:positionY, 
                     positionZ=:positionZ,
                     yaw=:yaw,
@@ -38,19 +38,34 @@ WHERE serial = :serial;
     except Error as e:
         print(e)
 
-    sql = """
-INSERT or IGNORE INTO positionIn (name,
-                                serial,
-                                positionX, 
-                                positionY, 
-                                positionZ, 
-                                yaw,
-                                pitch,
-                                roll)
-VALUES("MachineName", :serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
-    """
     try:
-        curs.execute(sql, params)
+        curs.execute("SELECT changes()")
+        if curs.fetchone()[0] is 0:
+            sql = """
+            INSERT or IGNORE INTO positionIn (serial,
+                                    positionX,
+                                    positionY,
+                                    positionZ,
+                                    yaw,
+                                    pitch,
+                                    roll)
+            VALUES(:serial, :positionX, :positionY, :positionZ, :yaw, :pitch, :roll);
+            """
+            try:
+                curs.execute(sql, params)
+            except Error as e:
+                print(e)
+
+            # update name based on ID if no name is given
+            params2 = {
+                "name": "Tracker " + str(curs.lastrowid),
+                "serial": params["serial"],
+            }
+
+            sql = """
+            UPDATE or IGNORE positionIn SET name=:name WHERE serial = :serial AND name IS NULL;
+            """
+            curs.execute(sql, params2)
     except Error as e:
         print(e)
 
