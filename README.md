@@ -53,9 +53,12 @@ SteamVR may give errors such as "Compositor is not running", "room setup is inva
 
 ## Setting up Siemens Tecnomatix
 
-To setup the Tecnomatix simulation, create a new model with the following components:
+To setup the Tecnomatix simulation, create a new 2D model with the following components:
 
 ```
+<Toolbox tab>
+- <Component>   : <Component Name>
+
 Material Flow
 - Source        : Source
 - SingleProc    : SingleProc
@@ -67,7 +70,7 @@ Information Flow
 - SQLite        : positionDB
 - Method        : INIT
 - Method        : RESET
-- Method        : endSim
+- Method        : ENDSIM
 - Method        : dbOpen
 - Method        : dbClose
 - Method        : listModules
@@ -76,19 +79,23 @@ Information Flow
 - Method        : updateModules
 
 User Objects
-- Frame         : <module name>
+- Frame         : <Module Name>
 (Add in more frames if needed)
+
 ```
+
+SQLite can be added to the toolbox through _home>Model>Manage Class Library_ under _Basic Objects>Information Flow_.
 
 The content of the method files can be found under [MethodFiles](/Tecnomatix/MethodFiles).
 
-Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. double-click `Drain` and under _control>Entrance_ select `moveModules`. In methods `dbOpen`, `dbClose` and `moveModules` change the path of commands where instructed.
+Right-click component and click _Rename_ to name the component.
 
-Lastly, click the _Home>Navigate>Open 2D/3D_ button.
+Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. Double-click `Drain` and under _Controls>Entrance_ select `moveModules`.
 
-## Running the program
+In methods `dbOpen`, `dbClose` and `moveModules` change the path of commands where instructed.
 
-Open the project in Siemen Tecnomatix and allow access to your computer. Double click the PositionDB block and change the file location to the newly created database. You should also enable "ignore errors" in the debugger tab.\
-Run the updatePosition script:\
-`python updatePosition.py`\
-The position should now be updating and shown in the console. Start the simulation in Tecnomatix.
+Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`
+
+Lastly, click the _Home>Navigate>Open 2D/3D_ button, accept the default 3D graphics.
+
+Run the simulation by clicking _Home>Event Controller>Start/stop Simulation_.
