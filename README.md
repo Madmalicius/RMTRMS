@@ -53,7 +53,7 @@ SteamVR may give errors such as "Compositor is not running", "room setup is inva
 
 ## Setting up Siemens Tecnomatix
 
-To setup the Tecnomatix simulation, create a new model with the following components:
+To setup the Tecnomatix simulation, create a new 2D model with the following components:
 
 ```
 Material Flow
