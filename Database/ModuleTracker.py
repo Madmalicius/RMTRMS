@@ -53,12 +53,24 @@ if __name__ == "__main__":
     try:
         config.read("config")
         databasePath = config.get("database", "path")
+        databasePathVar.set("Database is: " + databasePath)
     except configparser.NoSectionError:
         open_database()
         config.add_section("database")
         config.set("database", "path", databasePath)
 
+    with open("config", "w") as f:
+        config.write(f)
+
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
     databasePathWidget.pack()
+
+    moduleList = tk.Listbox(root)
+
+    moduleList.insert(1, "Machine 1")
+    moduleList.insert(2, "Machine 2")
+    moduleList.insert(3, "Machine 3")
+
+    moduleList.pack()
 
     root.mainloop()
