@@ -8,7 +8,7 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 - Siemens Tecnomatics
 - SteamVR
 - Python
-  - pipenv
+- pipenv
 
 ## Setting up environment
 
@@ -28,13 +28,6 @@ Activate the virtual environment:\
 `python -m pipenv shell`\
 Create the database by running the script:\
 `python createDatabase.py`
-
-## Running the program
-
-Open the project in Siemen Tecnomatix and allow access to your computer. Double click the PositionDB block and change the file location to the newly created database. You should also enable "ignore errors" in the debugger tab.\
-Run the updatePosition script:\
-`python updatePosition.py`\
-The position should now be updating and shown in the console. Start the simulation in Tecnomatix.
 
 ## Setting up SteamVR to run HMD-less
 
@@ -57,3 +50,41 @@ After this, you should be able to unplug the headset and box and run SteamVR usi
 
 <b>NOTE</b>\
 SteamVR may give errors such as "Compositor is not running", "room setup is invalid", but these will not effect the system.
+
+## Setting up Siemens Tecnomatix
+
+To setup the Tecnomatix simulation, create a new model with the following components:
+
+```
+Material Flow
+- Source        : Source
+- SingleProc    : SingleProc
+- Drain         : Drain
+
+Information Flow
+- TableFile     : modules
+- TableFile     : trackerPosition
+- SQLite        : positionDB
+- Method        : INIT
+- Method        : RESET
+- Method        : endSim
+- Method        : dbOpen
+- Method        : dbClose
+- Method        : listModules
+- Method        : moveModules
+- Method        : updatePosition
+- Method        : updateModules
+
+User Objects
+- Frame         : <module name>
+(Add in more frames if needed)
+```
+
+The content of the method files can be found under [MethodFiles](/Tecnomatix/MethodFiles)
+
+## Running the program
+
+Open the project in Siemen Tecnomatix and allow access to your computer. Double click the PositionDB block and change the file location to the newly created database. You should also enable "ignore errors" in the debugger tab.\
+Run the updatePosition script:\
+`python updatePosition.py`\
+The position should now be updating and shown in the console. Start the simulation in Tecnomatix.
