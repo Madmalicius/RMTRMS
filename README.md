@@ -33,18 +33,11 @@ Create the database by running the script:\
 
 [Triad Semi](http://help.triadsemi.com/steamvr-tracking/steamvr-tracking-without-an-hmd) has a great guide on how to run SteamVR without a headset. <b>To summarize:</b>
 
-Run SteamVR and set up your playspace as normal. After this is done, close SteamVR.\
-Modify the following files:
+Run SteamVR and set up your playspace as normal. After this is done, close SteamVR.
 
-- (<Steam Directory>/steamapps/common/SteamVR/drivers/null/resources/settings/default.vrsettings)\
-  Change the following lines:\
-  "enable" : true
+Run the python script `configure.py` found in the SteamVR folder in this repository. This will copy the settings file to your steam directory (Assuming default Steam install directory).
 
-- (<Steam Directory>/config/steamvr.vrsettings)\
-  Add the following lines under the "steamvr" section:\
-  "requireHmd" : false\
-  "forcedDriver" : "null"\
-  "activateMultipleDrivers" : true
+Alternatively, you can copy and paste the file into your Steam/config directory.
 
 After this, you should be able to unplug the headset and box and run SteamVR using only the tracker and accompanying dongle.
 
