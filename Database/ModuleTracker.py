@@ -5,6 +5,7 @@ import createDatabase
 
 
 root = tk.Tk()
+root.title("Module Manager")
 
 databasePathVar = tk.StringVar()
 databasePath = ""
@@ -39,8 +40,9 @@ def open_database():
 
 def change_name():
     i = moduleList.curselection()
-    moduleList.delete(i)
-    moduleList.insert(i, moduleName.get())
+    if i:
+        moduleList.delete(i)
+        moduleList.insert(i, moduleName.get())
 
 
 if __name__ == "__main__":
@@ -68,19 +70,28 @@ if __name__ == "__main__":
     with open("config", "w") as f:
         config.write(f)
 
+    # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
-    databasePathWidget.pack()
+    databasePathWidget.grid(columnspan=4, sticky=E + W)
 
+    # List of known modules
     moduleList = tk.Listbox(root)
-    moduleList.pack(padx=5, pady=10, side=LEFT, anchor=N)
+    moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
     moduleList.insert(1, "Machine 1")
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
+    # Module renaming
+    moduleNameLabel = tk.Label(root, text="Rename module")
+    moduleNameLabel.grid(row=2, column=1, sticky=E + W)
     moduleName = tk.Entry(root)
-    moduleName.pack(padx=5, pady=10, side=LEFT, anchor=N)
+    moduleName.grid(row=2, column=2, sticky=E + W)
 
     acceptName = tk.Button(root, text="Ok", command=change_name)
-    acceptName.pack(padx=5, pady=10, side=LEFT, anchor=N)
+    acceptName.grid(row=2, column=3)
+
+    # Checkbox for using tracker on module
+    trackerCheckbox = tk.Checkbutton(root, text="Track module?")
+    trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
     root.mainloop()
