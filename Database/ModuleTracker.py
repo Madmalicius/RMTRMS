@@ -12,6 +12,7 @@ root.title("Module Manager")
 
 databasePathVar = tk.StringVar()
 databasePath = ""
+hltModule = StringVar()
 
 
 def new_database():
@@ -76,6 +77,13 @@ def rename():
         moduleList.insert(i, trackerName.get())
 
 
+def updateModuleSelect(event):
+    if moduleList.curselection():
+        hltModule.set(moduleList.get(moduleList.curselection()))
+    else:
+        hltModule.set("")
+
+
 if __name__ == "__main__":
     menu = tk.Menu(root)
 
@@ -116,11 +124,15 @@ if __name__ == "__main__":
 
     # List of known modules
     moduleList = tk.Listbox(root)
+    moduleList.bind("<ButtonRelease-1>", updateModuleSelect)
     moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
     moduleList.insert(1, "Machine 1")
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
+    # Highlighted module
+    moduleName = tk.Label(root, bg="white", textvariable=hltModule)
+    moduleName.grid(row=1, column=1, sticky=E + W)
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?")
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
