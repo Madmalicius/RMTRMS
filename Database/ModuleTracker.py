@@ -51,14 +51,15 @@ def open_database():
 
 def manage_trackers():
     # Create window
-    trackerWindow = tk.Toplevel()
+    trackerWindow = tk.Toplevel(root)
     trackerWindow.title("Manage Trackers")
+    trackerWindow.grab_set()
 
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
     trackerList.insert(1, "Machine 1")
     trackerList.insert(2, "Machine 2")
-    trackerist.insert(3, "Machine 3")
+    trackerList.insert(3, "Machine 3")
 
     # tracker renaming
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
@@ -66,15 +67,20 @@ def manage_trackers():
     trackerName = tk.Entry(trackerWindow)
     trackerName.grid(row=2, column=2, sticky=E + W)
 
-    acceptName = tk.Button(trackerWindow, text="Ok", command=rename)
+    acceptName = tk.Button(
+        trackerWindow, text="Ok", command=lambda: rename(trackerList, trackerName)
+    )
     acceptName.grid(row=2, column=3)
 
 
-def rename():
-    i = moduleList.curselection()
+def rename(List, name):
+    i = List.curselection()
     if i:
-        moduleList.delete(i)
-        moduleList.insert(i, trackerName.get())
+        print("woo!")
+        List.delete(i)
+        List.insert(i, name.get())
+    else:
+        print("nooo!")
 
 
 def updateModuleSelect(event):
@@ -120,19 +126,22 @@ if __name__ == "__main__":
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
-    databasePathWidget.grid(columnspan=4, sticky=E + W)
+    databasePathWidget.grid(columnspan=5, sticky=E + W)
 
     # List of known modules
     moduleList = tk.Listbox(root)
     moduleList.bind("<ButtonRelease-1>", updateModuleSelect)
-    moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
+    moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=N + S + W)
     moduleList.insert(1, "Machine 1")
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
     # Highlighted module
-    moduleName = tk.Label(root, bg="white", textvariable=hltModule)
-    moduleName.grid(row=1, column=1, sticky=E + W)
+    moduleName = tk.Label(
+        root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
+    )
+    moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
+
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?")
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
