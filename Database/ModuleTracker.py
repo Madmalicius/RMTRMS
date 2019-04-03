@@ -22,6 +22,9 @@ def new_database():
         filetypes=[("db files", ".db"), ("all files", ".*")],
     )
 
+    if path == "":
+        return None
+
     if not path.endswith(".db"):
         path += ".db"
 
@@ -37,6 +40,10 @@ def open_database():
         title="Open database",
         filetypes=[("database files", ".db"), ("all files", ".*")],
     )
+
+    if path == "":
+        return None
+
     databasePath = path
     databasePathVar.set("Database is: " + path)
 
