@@ -13,6 +13,8 @@ root.title("Module Manager")
 databasePathVar = tk.StringVar()
 databasePath = ""
 hltModule = StringVar()
+trackers = StringVar()
+trackerArr = []
 
 
 def new_database():
@@ -55,6 +57,7 @@ def manage_trackers():
     trackerWindow.title("Manage Trackers")
     trackerWindow.grab_set()
 
+    # Tracker list
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
     trackerList.insert(1, "Machine 1")
@@ -141,6 +144,15 @@ if __name__ == "__main__":
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
     moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
+
+    # Tracker choice
+    for i in range(0, 5):
+        trackerArr.append("tracker " + str(i + 1))
+    trackers.set(trackerArr[0])
+    trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
+    trackerDropdown.config(bg="white", fg="black")
+    trackerDropdown["menu"].config(bg="white", fg="black")
+    trackerDropdown.grid(row=2, column=1, sticky=N + E + W)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?")
