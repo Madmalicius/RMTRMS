@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import *
 import configparser
 import createDatabase
 
@@ -37,6 +37,12 @@ def open_database():
     databasePathVar.set("Database is: " + path)
 
 
+def change_name():
+    i = moduleList.curselection()
+    moduleList.delete(i)
+    moduleList.insert(i, moduleName.get())
+
+
 if __name__ == "__main__":
     menu = tk.Menu(root)
 
@@ -66,11 +72,15 @@ if __name__ == "__main__":
     databasePathWidget.pack()
 
     moduleList = tk.Listbox(root)
-
+    moduleList.pack(padx=5, pady=10, side=LEFT, anchor=N)
     moduleList.insert(1, "Machine 1")
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
-    moduleList.pack()
+    moduleName = tk.Entry(root)
+    moduleName.pack(padx=5, pady=10, side=LEFT, anchor=N)
+
+    acceptName = tk.Button(root, text="Ok", command=change_name)
+    acceptName.pack(padx=5, pady=10, side=LEFT, anchor=N)
 
     root.mainloop()
