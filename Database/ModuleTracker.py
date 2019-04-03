@@ -5,6 +5,7 @@ import createDatabase
 
 
 root = tk.Tk()
+
 root.title("Module Manager")
 
 databasePathVar = tk.StringVar()
@@ -48,14 +49,23 @@ def change_name():
 if __name__ == "__main__":
     menu = tk.Menu(root)
 
+    # Create topmenu
     root.config(menu=menu)
 
-    filemenu = tk.Menu(menu)
+    fileMenu = tk.Menu(menu, tearoff=False)
+    trackerMenu = tk.Menu(menu, tearoff=False)
 
-    menu.add_cascade(label="File", menu=filemenu)
+    # Add tabs to Menu
+    menu.add_cascade(label="File", menu=fileMenu)
+    menu.add_cascade(label="Trackers", menu=trackerMenu)
 
-    filemenu.add_command(label="Create database", command=new_database)
-    filemenu.add_command(label="Open database", command=open_database)
+    # Add subtabs to File
+    fileMenu.add_command(label="Create database", command=new_database)
+    fileMenu.add_command(label="Open database", command=open_database)
+
+    # Add subtabs to Trackers
+    trackerMenu.add_command(label="Refresh")
+    trackerMenu.add_command(label="Manage Trackers")
 
     config = configparser.ConfigParser()
     try:
