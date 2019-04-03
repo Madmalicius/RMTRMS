@@ -12,6 +12,7 @@ root.title("Module Manager")
 
 databasePathVar = tk.StringVar()
 databasePath = ""
+hltModule = StringVar()
 
 
 def new_database():
@@ -48,11 +49,39 @@ def open_database():
     databasePathVar.set("Database is: " + path)
 
 
-def change_name():
+def manage_trackers():
+    # Create window
+    trackerWindow = tk.Toplevel()
+    trackerWindow.title("Manage Trackers")
+
+    trackerList = tk.Listbox(trackerWindow)
+    trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
+    trackerList.insert(1, "Machine 1")
+    trackerList.insert(2, "Machine 2")
+    trackerist.insert(3, "Machine 3")
+
+    # tracker renaming
+    trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
+    trackerNameLabel.grid(row=2, column=1, sticky=E + W)
+    trackerName = tk.Entry(trackerWindow)
+    trackerName.grid(row=2, column=2, sticky=E + W)
+
+    acceptName = tk.Button(trackerWindow, text="Ok", command=rename)
+    acceptName.grid(row=2, column=3)
+
+
+def rename():
     i = moduleList.curselection()
     if i:
         moduleList.delete(i)
-        moduleList.insert(i, moduleName.get())
+        moduleList.insert(i, trackerName.get())
+
+
+def updateModuleSelect(event):
+    if moduleList.curselection():
+        hltModule.set(moduleList.get(moduleList.curselection()))
+    else:
+        hltModule.set("")
 
 
 if __name__ == "__main__":
@@ -74,7 +103,7 @@ if __name__ == "__main__":
 
     # Add subtabs to Trackers
     trackerMenu.add_command(label="Refresh")
-    trackerMenu.add_command(label="Manage Trackers")
+    trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
     config = configparser.ConfigParser()
     try:
@@ -95,20 +124,15 @@ if __name__ == "__main__":
 
     # List of known modules
     moduleList = tk.Listbox(root)
+    moduleList.bind("<ButtonRelease-1>", updateModuleSelect)
     moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
     moduleList.insert(1, "Machine 1")
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
-    # Module renaming
-    moduleNameLabel = tk.Label(root, text="Rename module")
-    moduleNameLabel.grid(row=2, column=1, sticky=E + W)
-    moduleName = tk.Entry(root)
-    moduleName.grid(row=2, column=2, sticky=E + W)
-
-    acceptName = tk.Button(root, text="Ok", command=change_name)
-    acceptName.grid(row=2, column=3)
-
+    # Highlighted module
+    moduleName = tk.Label(root, bg="white", textvariable=hltModule)
+    moduleName.grid(row=1, column=1, sticky=E + W)
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?")
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
