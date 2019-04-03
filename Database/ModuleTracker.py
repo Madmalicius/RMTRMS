@@ -53,11 +53,11 @@ def manage_trackers():
     trackerWindow = tk.Toplevel()
     trackerWindow.title("Manage Trackers")
 
-    moduleList = tk.Listbox(trackerWindow)
-    moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
-    moduleList.insert(1, "Machine 1")
-    moduleList.insert(2, "Machine 2")
-    moduleList.insert(3, "Machine 3")
+    trackerList = tk.Listbox(trackerWindow)
+    trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
+    trackerList.insert(1, "Machine 1")
+    trackerList.insert(2, "Machine 2")
+    trackerist.insert(3, "Machine 3")
 
     # tracker renaming
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
