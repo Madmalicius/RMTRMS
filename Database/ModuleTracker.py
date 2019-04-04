@@ -9,10 +9,12 @@ import createDatabase
 root = tk.Tk()
 
 root.title("Module Manager")
+root.config(bg="#B0C4DE")
 
 databasePathVar = tk.StringVar()
 databasePath = ""
 hltModule = StringVar()
+hltTracker = StringVar()
 trackers = StringVar()
 trackerArr = []
 
@@ -93,6 +95,15 @@ def updateModuleSelect(event):
         hltModule.set("")
 
 
+def trackerSelect(*args):
+    # Check in DB where name is located
+    if trackers.get() == "tracker 1":
+        hltTracker.set("This is tracker 1")
+    else:
+        hltTracker.set("This is not tracker 1")
+    print(trackers.get())
+
+
 if __name__ == "__main__":
     menu = tk.Menu(root)
 
@@ -139,7 +150,7 @@ if __name__ == "__main__":
     moduleList.insert(2, "Machine 2")
     moduleList.insert(3, "Machine 3")
 
-    # Highlighted module
+    # Highlighted module label
     moduleName = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
@@ -148,11 +159,17 @@ if __name__ == "__main__":
     # Tracker choice
     for i in range(0, 5):
         trackerArr.append("tracker " + str(i + 1))
-    trackers.set(trackerArr[0])
+    trackers.set("Choose tracker")
+    trackers.trace("w", trackerSelect)
     trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=2, column=1, sticky=N + E + W)
+    trackerDropdown.grid(row=2, column=1, sticky=N)
+
+    # Tracker serial label
+    hltTracker.set("No tracker chosen")
+    trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
+    trackerSerial.grid(row=2, column=2, sticky=E + W + N)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?")
