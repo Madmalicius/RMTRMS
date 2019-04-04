@@ -24,14 +24,14 @@ def create_connection(db_file):
 def update_position_db(curs, params):
 
     sql = """
-UPDATE positionIn SET positionX=:positionX, 
-                    positionY=:positionY, 
-                    positionZ=:positionZ,
-                    yaw=:yaw,
-                    pitch=:pitch,
-                    roll=:roll
-WHERE serial = :serial;
-"""
+          UPDATE positionIn SET positionX=:positionX, 
+                                positionY=:positionY, 
+                                positionZ=:positionZ,
+                                yaw=:yaw,
+                                pitch=:pitch,
+                                roll=:roll
+          WHERE serial = :serial;
+          """
 
     try:
         curs.execute(sql, params)
