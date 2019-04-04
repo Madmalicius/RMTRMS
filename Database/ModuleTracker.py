@@ -54,6 +54,8 @@ def open_database():
 
 
 def manage_trackers():
+    i = None
+
     # Create window
     trackerWindow = tk.Toplevel(root)
     trackerWindow.title("Manage Trackers")
@@ -62,9 +64,11 @@ def manage_trackers():
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
-    trackerList.insert(1, "Machine 1")
-    trackerList.insert(2, "Machine 2")
-    trackerList.insert(3, "Machine 3")
+
+    for index, tracker in enumerate(trackerArr, start=0):
+        if tracker == trackers.get():
+            i = index
+        trackerList.insert(index, tracker)
 
     # tracker renaming
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
@@ -73,17 +77,40 @@ def manage_trackers():
     trackerName.grid(row=2, column=2, sticky=E + W)
 
     acceptName = tk.Button(
-        trackerWindow, text="Ok", command=lambda: rename(trackerList, trackerName)
+        trackerWindow,
+        text="Ok",
+        command=lambda: update_tracker_list(trackerList, trackerName, trackerArr, i),
     )
     acceptName.grid(row=2, column=3)
 
 
+def update_tracker_list(List, name, array, index):
+    i = List.curselection()
+    rename(List, name)
+
+    print(i)
+    trackerArr[i[0]] = name.get()
+    trackers.set("")
+    trackerDropdown["menu"].delete(0, "end")
+    for tracker in trackerArr:
+        trackerDropdown["menu"].add_command(
+            label=tracker, command=tk._setit(trackers, tracker)
+        )
+    if index:
+        trackers.set(trackerArr[index])
+    else:
+        trackers.set("Choose tracker")
+
+
 def rename(List, name):
     i = List.curselection()
+    print(i)
     if i:
         print("woo!")
+        tmp = List.get(i[0])
         List.delete(i)
         List.insert(i, name.get())
+
     else:
         print("nooo!")
 
