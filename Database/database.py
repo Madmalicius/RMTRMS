@@ -10,6 +10,31 @@ class Database:
             print(e)
         self.curs = self.db.cursor()
 
+    def get_module_list(self):
+        # TODO
+        """Not implemented"""
+        print("Not implemented")
+
+    def get_tracking_status(self, tracker):
+        # TODO
+        """Not implemented"""
+        print("Not implemented")
+
+    def set_tracking_status(self, tracker):
+        # TODO
+        """Not implemented"""
+        print("Not implemented")
+
+    def get_tracker_name(self, tracker):
+        # TODO
+        """Not implemented"""
+        print("Not implemented")
+
+    def get_tracker_list(self):
+        # TODO
+        """Not implemented"""
+        print("Not implemented")
+
     def assign_tracker(self, module, tracker):
         """Assigns a tracker serial to a module.
         
