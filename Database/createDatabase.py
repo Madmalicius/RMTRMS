@@ -66,7 +66,8 @@ def create_database(path="Modules.db"):
     CREATE TABLE IF NOT EXISTS modules (
     id INTEGER PRIMARY KEY,
     module TEXT UNIQUE NOT NULL,
-    tracker TEXT UNIQUE
+    tracker TEXT UNIQUE,
+    tracked BIT NOT NULL
     );
     """
     try:
