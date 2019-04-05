@@ -2,6 +2,8 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
+from threading import Thread
+from time import sleep
 import configparser
 import createDatabase
 
@@ -17,6 +19,8 @@ hltModule = StringVar()
 hltTracker = StringVar()
 trackers = StringVar()
 trackerArr = []
+checkButtonStatus = IntVar()
+runTrackerUpdate = True
 
 
 def new_database():
@@ -124,11 +128,19 @@ def updateModuleSelect(event):
 
 def trackerSelect(*args):
     # Check in DB where name is located
-    if trackers.get() == "tracker 1":
-        hltTracker.set("This is tracker 1")
-    else:
-        hltTracker.set("This is not tracker 1")
+    hltTracker.set("this is " + trackers.get())
     print(trackers.get())
+
+
+def checkTracking():
+    print("activated")
+    print(checkButtonStatus.get())
+
+
+def testTread():
+    while runTrackerUpdate:
+        print("woo!")
+        sleep(2)
 
 
 if __name__ == "__main__":
@@ -199,7 +211,14 @@ if __name__ == "__main__":
     trackerSerial.grid(row=2, column=2, sticky=E + W + N)
 
     # Checkbox for using tracker on module
-    trackerCheckbox = tk.Checkbutton(root, text="Track module?")
+    trackerCheckbox = tk.Checkbutton(
+        root, text="Track module?", var=checkButtonStatus, command=checkTracking
+    )
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
+    test = Thread(target=testTread, args=[])
+    test.start()
+
     root.mainloop()
+
+    runTrackerUpdate = False
