@@ -11,9 +11,15 @@ class database:
         self.curs = self.db.cursor()
 
     def assign_tracker(self, module, tracker):
-        """ assign a tracker serial to a module """
+        """ 
+        assigns a tracker serial to a module
 
-        params = {"module": module, "tracker": tracker}
+        parameters:
+        module : the module to which the tracker will be assigned
+        tracker : the tracker object to assign
+        """
+
+        params = {"module": module, "tracker": tracker.serial}
 
         sql = """
             UPDATE modules SET tracker=:tracker WHERE module=:module
@@ -25,7 +31,12 @@ class database:
             print(e)
 
     def update_positionIn(self, tracker):
-        """ update the position of a tracker in the database """
+        """ 
+        updates the position of a tracker in the database
+
+        parameters:
+        tracker : tracker object whose position will be updated
+        """
 
         params = {
             "serial": tracker.serial,
@@ -87,4 +98,11 @@ class database:
         self.db.commit()
 
     def check_close(self):
+        """ 
+        returns the status of the database close field
+        
+        parameters:
+        None
+        """
+
         return self.curs.execute("SELECT close FROM terminate").fetchone()[0]
