@@ -15,12 +15,14 @@ class Database:
         """Not implemented"""
         print("Not implemented")
 
-    def get_tracking_status(self, tracker):
-        # TODO
-        """Not implemented"""
-        print("Not implemented")
+    def get_tracking_status(self, module):
+        """Returns the tracking status of the specified module"""
 
-    def set_tracking_status(self, tracker):
+        return self.curs.execute(
+            "SELECT tracking FROM modules WHERE module=:module", module
+        ).fetchone()[0]
+
+    def set_tracking_status(self, tracker, status):
         # TODO
         """Not implemented"""
         print("Not implemented")
