@@ -1,4 +1,4 @@
-class tracker:
+class Tracker:
     def __init__(self, vr, tracker):
         self.vr = vr
         self.trackerID = tracker
