@@ -5,7 +5,10 @@ from tkinter import filedialog
 from threading import Thread
 from time import sleep
 import configparser
+import triad_openvr
 import createDatabase
+import database
+import trackers
 
 
 root = tk.Tk()
@@ -21,6 +24,28 @@ trackers = StringVar()
 trackerArr = []
 checkButtonStatus = IntVar()
 runTrackerUpdate = True
+
+
+def search_for_tracker(vr):
+    trackerCount, searchCount = 0, 0
+    while trackerCount is 0 and searchCount < 5000:
+        print("\rSearching for trackers", end="")
+        vr.update_device_list()
+        for device in vr.devices:
+            if "tracker" not in device:
+                searchCount += 1
+                sleep(0.001)
+                continue
+            else:
+                trackerCount += 1
+
+
+def update_trackers(trackers, database):
+    for tracker in trackers:
+        tracker.update_position()
+        database.update_positionIn(tracker)
+        print("updated " + tracker.serial)
+    sleep(0.1)
 
 
 def new_database():
@@ -137,13 +162,28 @@ def checkTracking():
     print(checkButtonStatus.get())
 
 
-def testTread():
+def testTread(trackers, database):
     while runTrackerUpdate:
-        print("woo!")
-        sleep(2)
+        update_trackers(trackers, database)
 
 
 if __name__ == "__main__":
+    vr = triad_openvr.triad_openvr()
+    vr.print_discovered_objects()
+
+    config = configparser.ConfigParser()
+    config.read("config")
+    databasePath = config.get("database", "path")
+    database = database.Database(databasePath)
+    trackerList = []
+
+    search_for_tracker(vr)
+    for device in vr.devices:
+        if "tracker" not in device:
+            continue
+        newTracker = trackers.Tracker(vr, device)
+        trackerList.append(newTracker)
+
     menu = tk.Menu(root)
 
     # Create topmenu
@@ -216,9 +256,8 @@ if __name__ == "__main__":
     )
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
-    test = Thread(target=testTread, args=[])
+    # Create and run thread & GUI
+    test = Thread(target=testTread, args=[trackerList, database], daemon=True)
     test.start()
 
     root.mainloop()
-
-    runTrackerUpdate = False
