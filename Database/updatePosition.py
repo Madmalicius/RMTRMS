@@ -24,7 +24,7 @@ def create_connection(db_file):
 def update_position_db(curs, params):
 
     sql = """
-          UPDATE positionIn SET positionX=:positionX, 
+          UPDATE trackers SET positionX=:positionX, 
                                 positionY=:positionY, 
                                 positionZ=:positionZ,
                                 yaw=:yaw,
@@ -42,7 +42,7 @@ def update_position_db(curs, params):
         curs.execute("SELECT changes()")
         if curs.fetchone()[0] is 0:
             sql = """
-            INSERT or IGNORE INTO positionIn (serial,
+            INSERT or IGNORE INTO trackers (serial,
                                     positionX,
                                     positionY,
                                     positionZ,
@@ -63,7 +63,7 @@ def update_position_db(curs, params):
             }
 
             sql = """
-            UPDATE or IGNORE positionIn SET name=:name WHERE serial = :serial AND name IS NULL;
+            UPDATE or IGNORE trackers SET name=:name WHERE serial = :serial AND name IS NULL;
             """
             curs.execute(sql, params2)
     except Error as e:

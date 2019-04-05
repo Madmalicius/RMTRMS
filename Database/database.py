@@ -10,6 +10,9 @@ class database:
             print(e)
         self.curs = self.db.cursor()
 
+    def get_tracker_list(self):
+        pass
+
     def assign_tracker(self, module, tracker):
         """ 
         assigns a tracker serial to a module
@@ -30,7 +33,7 @@ class database:
         except sqliteError as e:
             print(e)
 
-    def update_positionIn(self, tracker):
+    def update_tracker_position(self, tracker):
         """ 
         updates the position of a tracker in the database
 
@@ -49,7 +52,7 @@ class database:
         }
 
         sql = """
-                UPDATE positionIn SET positionX=:positionX, 
+                UPDATE trackers SET positionX=:positionX, 
                                     positionY=:positionY, 
                                     positionZ=:positionZ,
                                     yaw=:yaw,
@@ -67,7 +70,7 @@ class database:
             self.curs.execute("SELECT changes()")
             if self.curs.fetchone()[0] is 0:
                 sql = """
-                INSERT or IGNORE INTO positionIn (serial,
+                INSERT or IGNORE INTO trackers (serial,
                                         positionX,
                                         positionY,
                                         positionZ,
@@ -88,7 +91,7 @@ class database:
                 }
 
                 sql = """
-                UPDATE or IGNORE positionIn SET name=:name WHERE serial = :serial AND name IS NULL;
+                UPDATE or IGNORE trackers SET name=:name WHERE serial = :serial AND name IS NULL;
                 """
 
                 self.curs.execute(sql, params2)

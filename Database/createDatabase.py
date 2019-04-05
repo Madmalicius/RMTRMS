@@ -19,7 +19,7 @@ def create_database(path="Modules.db"):
     conn = create_connection(path)
     curs = conn.cursor()
     sql = """
-    CREATE TABLE IF NOT EXISTS positionIn (
+    CREATE TABLE IF NOT EXISTS trackers (
     id INTEGER PRIMARY KEY,
     name TEXT,
     serial TEXT UNIQUE NOT NULL,
