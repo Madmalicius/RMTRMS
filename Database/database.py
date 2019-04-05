@@ -10,16 +10,12 @@ class database:
             print(e)
         self.curs = self.db.cursor()
 
-    def get_tracker_list(self):
-        pass
-
     def assign_tracker(self, module, tracker):
-        """ 
-        assigns a tracker serial to a module
-
-        parameters:
-        module : the module to which the tracker will be assigned
-        tracker : the tracker object to assign
+        """Assigns a tracker serial to a module.
+        
+        Arguments:
+            module {Module} -- The module to which the tracker will be assigned.
+            tracker {Tracker} -- The tracker which will be assigned to the module
         """
 
         params = {"module": module, "tracker": tracker.serial}
@@ -34,11 +30,10 @@ class database:
             print(e)
 
     def update_tracker_position(self, tracker):
-        """ 
-        updates the position of a tracker in the database
-
-        parameters:
-        tracker : tracker object whose position will be updated
+        """Updates the position of the tracker in the database
+        
+        Arguments:
+            tracker {Tracker} -- The tracker whose position will be updated in the database
         """
 
         params = {
@@ -101,11 +96,10 @@ class database:
         self.db.commit()
 
     def check_close(self):
-        """ 
-        returns the status of the database close field
-        
-        parameters:
-        None
+        """Checks the close field of the database
+
+        Returns:
+            int -- 1 if Tecnomatix has closed
         """
 
         return self.curs.execute("SELECT close FROM terminate").fetchone()[0]
