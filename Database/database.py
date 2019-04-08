@@ -17,15 +17,26 @@ class Database:
 
     def get_tracking_status(self, module):
         """Returns the tracking status of the specified module"""
+        try:
+            ret = self.curs.execute(
+                "SELECT tracked FROM modules WHERE module=:module", (module,)
+            ).fetchone()[0]
+            return ret
+        except sqliteError as e:
+            print(e)
 
-        return self.curs.execute(
-            "SELECT tracking FROM modules WHERE module=:module", module
-        ).fetchone()[0]
+        return None
 
-    def set_tracking_status(self, tracker, status):
-        # TODO
-        """Not implemented"""
-        print("Not implemented")
+    def set_tracking_status(self, module, status):
+        """Set the tracking status of the specified module"""
+
+        try:
+            self.curs.execute(
+                "UPDATE modules SET tracked=:status WHERE module=:module",
+                (status, module),
+            )
+        except sqliteError as e:
+            print(e)
 
     def get_tracker_name(self, tracker):
         # TODO
