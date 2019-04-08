@@ -28,7 +28,7 @@ class Database:
         return None
 
     def set_tracking_status(self, module, status):
-        """Set the tracking status of the specified module"""
+        """Sets the tracking status of the specified module"""
 
         try:
             self.curs.execute(
@@ -39,9 +39,25 @@ class Database:
             print(e)
 
     def get_tracker_name(self, tracker):
-        # TODO
-        """Not implemented"""
-        print("Not implemented")
+        """Returns the name of the tracker"""
+
+        try:
+            return self.curs.execute(
+                "SELECT name FROM trackers WHERE serial=:serial", (tracker.serial,)
+            ).fetchone()[0]
+        except sqliteError as e:
+            print(e)
+
+    def set_tracker_name(self, tracker, name):
+        """Sets the name of the tracker"""
+
+        try:
+            self.curs.execute(
+                "UPDATE trackers SET name=:name WHERE serial=:serial",
+                (name, tracker.serial),
+            )
+        except sqliteError as e:
+            print(e)
 
     def get_tracker_list(self):
         # TODO
