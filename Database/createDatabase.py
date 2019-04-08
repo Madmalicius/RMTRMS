@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """ Creates a database for the RMTRMS project in the current directory"""
 
 import sqlite3
