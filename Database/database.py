@@ -11,21 +11,39 @@ class Database:
         self.curs = self.db.cursor()
 
     def get_module_list(self):
-        # TODO
-        """Not implemented"""
-        print("Not implemented")
+        """Returns a list of modules"""
+
+        try:
+            moduleList = self.curs.execute("SELECT module FROM modules").fetchall()
+            for index, module in enumerate(moduleList):
+                moduleList[index] = module[0]
+            return moduleList
+        except sqliteError as e:
+            print(e)
+            return None
+
+    def get_tracker_list(self):
+        """Returns a list of trackers"""
+
+        try:
+            trackerList = self.curs.execute("SELECT serial FROM trackers").fetchall()
+            for index, tracker in enumerate(trackerList):
+                trackerList[index] = tracker[0]
+            return trackerList
+        except sqliteError as e:
+            print(e)
+            return None
 
     def get_tracking_status(self, module):
         """Returns the tracking status of the specified module"""
         try:
-            ret = self.curs.execute(
+            tracked = self.curs.execute(
                 "SELECT tracked FROM modules WHERE module=:module", (module,)
             ).fetchone()[0]
-            return ret
+            return tracked
         except sqliteError as e:
             print(e)
-
-        return None
+            return None
 
     def set_tracking_status(self, module, status):
         """Sets the tracking status of the specified module"""
@@ -58,11 +76,6 @@ class Database:
             )
         except sqliteError as e:
             print(e)
-
-    def get_tracker_list(self):
-        # TODO
-        """Not implemented"""
-        print("Not implemented")
 
     def assign_tracker(self, module, tracker):
         """Assigns a tracker serial to a module.
