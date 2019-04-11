@@ -31,7 +31,9 @@ Create the database by running the script:\
 
 ## Setting up SteamVR to run HMD-less
 
-[Triad Semi](http://help.triadsemi.com/steamvr-tracking/steamvr-tracking-without-an-hmd) has a great guide on how to run SteamVR without a headset. <b>To summarize:</b>
+[Triad Semi](http://help.triadsemi.com/steamvr-tracking/steamvr-tracking-without-an-hmd) has a great guide on how to run SteamVR without a headset. \
+
+For your convenience, we've created a script to automatically set this up.:
 
 Run SteamVR and set up your playspace as normal. After this is done, close SteamVR.
 
