@@ -4,6 +4,7 @@ from sqlite3 import Error as sqliteError
 
 class Database:
     def __init__(self, db):
+        self.databasePath = db
         try:
             self.db = sqlite3.connect(db)
         except sqliteError as e:
