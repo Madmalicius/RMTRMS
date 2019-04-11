@@ -81,7 +81,7 @@ class Database:
         """Assigns a tracker serial to a module.
         
         Arguments:
-            module {Module} -- The module to which the tracker will be assigned.
+            module {String} -- The module to which the tracker will be assigned.
             tracker {Tracker} -- The tracker which will be assigned to the module
         """
 
@@ -166,7 +166,7 @@ class Database:
         """Checks the close field of the database
 
         Returns:
-            int -- 1 if Tecnomatix has closed
+            int -- 1 if the program should close
         """
 
         return self.curs.execute("SELECT close FROM terminate").fetchone()[0]
