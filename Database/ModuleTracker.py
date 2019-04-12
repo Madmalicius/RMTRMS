@@ -7,9 +7,8 @@ from time import sleep
 import configparser
 import triad_openvr
 import createDatabase
-import database
+from database import Database
 import trackers
-
 
 root = tk.Tk()
 
@@ -18,6 +17,7 @@ root.config(bg="#B0C4DE")
 
 databasePathVar = tk.StringVar()
 databasePath = ""
+
 hltModule = StringVar()
 hltTracker = StringVar()
 trackers = StringVar()
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config")
     databasePath = config.get("database", "path")
-    database = database.Database(databasePath)
+    database = Database(databasePath)
     trackerList = []
 
     search_for_tracker(vr)
@@ -225,9 +225,9 @@ if __name__ == "__main__":
     moduleList = tk.Listbox(root)
     moduleList.bind("<ButtonRelease-1>", updateModuleSelect)
     moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=N + S + W)
-    moduleList.insert(1, "Machine 1")
-    moduleList.insert(2, "Machine 2")
-    moduleList.insert(3, "Machine 3")
+    modules = database.get_module_list()
+    for index, module in enumerate(modules, start=0):
+        moduleList.insert(index, module)
 
     # Highlighted module label
     moduleName = tk.Label(
