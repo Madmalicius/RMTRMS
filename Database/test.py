@@ -1,4 +1,4 @@
-from RTMRMS import Database, Tracker
+from RMTRMS import Database, Tracker
 import triad_openvr
 import configparser
 import time
