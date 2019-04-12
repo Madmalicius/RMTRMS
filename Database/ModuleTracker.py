@@ -9,7 +9,7 @@ import configparser
 import triad_openvr
 import createDatabase
 from database import Database
-import trackers
+from trackers import Tracker
 
 root = tk.Tk()
 
@@ -43,7 +43,7 @@ def search_for_tracker(vr):
 def update_trackers(trackers, database):
     for tracker in trackers:
         tracker.update_position()
-        database.update_positionIn(tracker)
+        database.update_tracker_position(tracker)
         print("updated " + tracker.serial)
     sleep(0.1)
 
@@ -144,9 +144,10 @@ def rename(List, name):
         print("nooo!")
 
 
-def updateModuleSelect(event):
+def updateModuleSelect(event, database):
     if moduleList.curselection():
         hltModule.set(moduleList.get(moduleList.curselection()))
+        checkButtonStatus.set(database.get_tracking_status(hltModule.get()))
     else:
         hltModule.set("")
 
@@ -162,7 +163,8 @@ def checkTracking():
     print(checkButtonStatus.get())
 
 
-def testTread(trackers, database):
+def testTread(trackers, databasePath):
+    database = Database(databasePath)
     while threading.main_thread().isAlive():
         update_trackers(trackers, database)
 
@@ -181,7 +183,7 @@ if __name__ == "__main__":
     for device in vr.devices:
         if "tracker" not in device:
             continue
-        newTracker = trackers.Tracker(vr, device)
+        newTracker = Tracker(vr, device)
         trackerList.append(newTracker)
 
     menu = tk.Menu(root)
@@ -223,7 +225,9 @@ if __name__ == "__main__":
 
     # List of known modules
     moduleList = tk.Listbox(root)
-    moduleList.bind("<ButtonRelease-1>", updateModuleSelect)
+    moduleList.bind(
+        "<ButtonRelease-1>", lambda event: updateModuleSelect(event, database)
+    )
     moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=N + S + W)
     modules = database.get_module_list()
     for index, module in enumerate(modules, start=0):
@@ -257,7 +261,7 @@ if __name__ == "__main__":
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
     # Create and run thread & GUI
-    test = Thread(target=testTread, args=[trackerList, database])
+    test = Thread(target=testTread, args=[trackerList, databasePath])
     test.start()
 
     root.mainloop()
