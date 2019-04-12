@@ -95,8 +95,23 @@ def test_name(database, tracker):
         time.sleep(1)
 
 
-def test_assign_tracker(database):
-    pass
+def test_assign_tracker(database, tracker):
+    database = Database(database.databasePath)
+    global databaseLock
+
+    time.sleep(4)
+
+    if threading.main_thread().isAlive():
+        pass
+    else:
+        exit()
+
+    databaseLock.acquire()
+
+    database.assign_tracker("CNC", tracker)
+
+    databaseLock.release()
+    exit()
 
 
 if __name__ == "__main__":
@@ -127,7 +142,7 @@ if __name__ == "__main__":
     )
 
     test_assign_tracker_thread = Thread(
-        target=test_assign_tracker, args=[database], daemon=False
+        target=test_assign_tracker, args=[database, trackers[0]], daemon=False
     )
 
     test_name_thread = Thread(
