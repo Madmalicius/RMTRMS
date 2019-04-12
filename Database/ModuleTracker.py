@@ -45,7 +45,7 @@ def update_trackers(trackers, database):
         tracker.update_position()
         database.update_tracker_position(tracker)
         print("updated " + tracker.serial)
-    sleep(0.1)
+    sleep(0.001)
 
 
 def new_database():
