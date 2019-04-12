@@ -1,7 +1,7 @@
 class Tracker:
-    def __init__(self, vr, tracker):
+    def __init__(self, vr, trackerID):
         self.vr = vr
-        self.trackerID = tracker
+        self.trackerID = trackerID
         self.serial = self.vr.devices[self.trackerID].get_serial()
         pose = self.vr.devices[self.trackerID].get_pose_euler()
         self.x = pose[0]
