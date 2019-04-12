@@ -13,7 +13,7 @@ for var i := 1 to 1000
 		exitLoop;
 	else
 		module := moduleList[i].name;
-		sql := "INSERT or IGNORE INTO modules (module) VALUES (\"" + module + "\")"
+		sql := "INSERT or IGNORE INTO modules (module, tracked) VALUES (\"" + module + "\", 0)"
 		.Models.Frame.PositionDB.exec(sql);
 	end
 next
