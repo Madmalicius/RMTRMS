@@ -2,7 +2,6 @@ var moduleName:string;
 var module:object;
 var x,y,yaw:real;
 var row:integer;
-var checkTracking:boolean;
 
 .Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db"); -- Choose path to database file
 
