@@ -46,6 +46,16 @@ class Database:
             print(e)
             return None
 
+    def get_tracker_name(self, tracker):
+        """Returns the name of the tracker"""
+
+        try:
+            return self.curs.execute(
+                "SELECT name FROM trackers WHERE serial=:serial", (tracker.serial,)
+            ).fetchone()[0]
+        except sqliteError as e:
+            print(e)
+
     def set_tracking_status(self, module, status):
         """Sets the tracking status of the specified module"""
 
@@ -57,15 +67,7 @@ class Database:
         except sqliteError as e:
             print(e)
 
-    def get_tracker_name(self, tracker):
-        """Returns the name of the tracker"""
-
-        try:
-            return self.curs.execute(
-                "SELECT name FROM trackers WHERE serial=:serial", (tracker.serial,)
-            ).fetchone()[0]
-        except sqliteError as e:
-            print(e)
+        self.db.commit()
 
     def set_tracker_name(self, tracker, name):
         """Sets the name of the tracker"""
@@ -77,6 +79,8 @@ class Database:
             )
         except sqliteError as e:
             print(e)
+
+        self.db.commit()
 
     def assign_tracker(self, module, tracker):
         """Assigns a tracker serial to a module.
@@ -96,6 +100,8 @@ class Database:
             self.curs.execute(sql, params)
         except sqliteError as e:
             print(e)
+
+        self.db.commit()
 
     def update_tracker_position(self, tracker):
         """Updates the position of the tracker in the database
