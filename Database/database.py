@@ -13,7 +13,11 @@ class Database:
         self.curs = self.db.cursor()
 
     def get_module_list(self):
-        """Returns a list of modules"""
+        """Returns a list of modules.
+
+        Returns:
+            List -- list of Strings with module names.
+        """
 
         try:
             moduleList = self.curs.execute("SELECT module FROM modules").fetchall()
@@ -25,7 +29,11 @@ class Database:
             return None
 
     def get_tracker_list(self):
-        """Returns a list of tracker serials"""
+        """Returns a list of tracker serials.
+        
+        Returns:
+            List -- list of Strings with known tracker serials.
+        """
 
         try:
             trackerList = self.curs.execute("SELECT serial FROM trackers").fetchall()
@@ -37,7 +45,15 @@ class Database:
             return None
 
     def get_tracking_status(self, module):
-        """Returns the tracking status of the specified module"""
+        """Returns the tracking status of the specified module.
+        
+        Arguments:
+            module {String} -- The module of which the tracking status will be returned.
+        
+        Returns:
+            bool -- Tracking status of the module.
+        """
+
         try:
             tracked = self.curs.execute(
                 "SELECT tracked FROM modules WHERE module=:module", (module,)
@@ -48,7 +64,14 @@ class Database:
             return None
 
     def get_tracker_name(self, tracker):
-        """Returns the name of the tracker"""
+        """Returns the name of the tracker.
+        
+        Arguments:
+            tracker {Tracker} -- The tracker of which the name will be returned.
+        
+        Returns:
+            String -- Name of specified module.
+        """
 
         try:
             return self.curs.execute(
@@ -58,7 +81,12 @@ class Database:
             print(e)
 
     def set_tracking_status(self, module, status):
-        """Sets the tracking status of the specified module"""
+        """Sets the tracking status of the specified module.
+        
+        Arguments:
+            module {String} -- The module of which the status will be modified.
+            status {int} -- The tracking status of the module. 1 for tracking, 0 for not tracking.
+        """
 
         try:
             self.curs.execute(
@@ -71,7 +99,12 @@ class Database:
         self.db.commit()
 
     def set_tracker_name(self, tracker, name):
-        """Sets the name of the tracker"""
+        """Sets the name of the tracker.
+
+        Arguments:
+            tracker {Tracker} -- The tracker of which the name will be modified.
+            name {String} -- The name which will be assigned to the tracker.
+        """
 
         try:
             self.curs.execute(
