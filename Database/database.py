@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error as sqliteError
+from trackers import Tracker
 
 
 class Database:
@@ -24,7 +25,7 @@ class Database:
             return None
 
     def get_tracker_list(self):
-        """Returns a list of trackers"""
+        """Returns a list of tracker serials"""
 
         try:
             trackerList = self.curs.execute("SELECT serial FROM trackers").fetchall()
