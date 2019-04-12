@@ -8,8 +8,7 @@ from time import sleep
 import configparser
 import triad_openvr
 import createDatabase
-from database import Database
-from trackers import Tracker
+from RTMRMS import Database, Tracker
 
 root = tk.Tk()
 
