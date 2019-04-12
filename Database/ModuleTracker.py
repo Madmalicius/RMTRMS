@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
+import threading
 from threading import Thread
 from time import sleep
 import configparser
@@ -23,7 +24,6 @@ hltTracker = StringVar()
 trackers = StringVar()
 trackerArr = []
 checkButtonStatus = IntVar()
-runTrackerUpdate = True
 
 
 def search_for_tracker(vr):
@@ -163,7 +163,7 @@ def checkTracking():
 
 
 def testTread(trackers, database):
-    while runTrackerUpdate:
+    while threading.main_thread().isAlive():
         update_trackers(trackers, database)
 
 
@@ -257,7 +257,8 @@ if __name__ == "__main__":
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
     # Create and run thread & GUI
-    test = Thread(target=testTread, args=[trackerList, database], daemon=True)
+    test = Thread(target=testTread, args=[trackerList, database])
     test.start()
 
     root.mainloop()
+
