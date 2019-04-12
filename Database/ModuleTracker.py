@@ -158,9 +158,10 @@ def trackerSelect(*args):
     print(trackers.get())
 
 
-def checkTracking():
+def toggleTracking(database):
     print("activated")
     print(checkButtonStatus.get())
+    database.set_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
 def testTread(trackers, databasePath):
@@ -256,7 +257,7 @@ if __name__ == "__main__":
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
-        root, text="Track module?", var=checkButtonStatus, command=checkTracking
+        root, text="Track module?", var=checkButtonStatus, command=lambda: toggleTracking(database)
     )
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
