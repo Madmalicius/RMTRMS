@@ -5,6 +5,7 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 ## Software Requirements
 
 - Windows
+- Git
 - Siemens Tecnomatics
 - SteamVR
 - Python
@@ -15,10 +16,12 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 Your computer must have both Siemens Tecnomatics and SteamVR installed.\
 Students can download Siemens Tecnomatics for free from their [website](https://www.plm.automation.siemens.com/plmapp/education/plant-simulation/en_us/free-software/student/).\
 SteamVR can be found under the <b>Tools</b> section of your Steam library.\
+The newest version of Git for Windows can be found [here](https://gitforwindows.org/).\
 Python should be downloaded and installed from their [website](https://www.python.org/). The newest version (or most versions 3.x) will work.\
-Once python is installed, use Pip to install pipenv:\
+For CMD, the path to Python might need to be added manually. A guide can be found [here](https://edu.google.com/openonline/course-builder/docs/1.10/set-up-course-builder/check-for-python.html).\
+Once python is installed, use Pip to install pipenv in either CMD, Git Bash or PowerShell:\
 `python -m pip install pipenv`\
-Clone this repository using Git:\
+In CMD. Git Bash or PowerShell cd into your work directory and clone this repository using Git:\
 `git clone https://github.com/madmalicius/RMTRMS.git`\
 Navigate to the repository and to the Database folder: \
 `cd RMTRMS/Database`\
