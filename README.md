@@ -13,31 +13,31 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 
 ## Setting up environment
 
-Your computer must have both Siemens Tecnomatics and SteamVR installed.\
+Your computer must have both Siemens Tecnomatics and SteamVR installed.
 
-Students can download Siemens Tecnomatics for free from their [website](https://www.plm.automation.siemens.com/plmapp/education/plant-simulation/en_us/free-software/student/).\
+Students can download Siemens Tecnomatics for free from their [website](https://www.plm.automation.siemens.com/plmapp/education/plant-simulation/en_us/free-software/student/).
 
-SteamVR can be found under the <b>Tools</b> section of your Steam library.\
+SteamVR can be found under the <b>Tools</b> section of your Steam library.
 
-The newest version of Git for Windows can be found [here](https://gitforwindows.org/).\
+The newest version of Git for Windows can be found [here](https://gitforwindows.org/).
 
-Python should be downloaded and installed from their [website](https://www.python.org/). The newest version (or most versions 3.x) will work.\
-For CMD, the path to Python might need to be added manually. A guide can be found [here](https://edu.google.com/openonline/course-builder/docs/1.10/set-up-course-builder/check-for-python.html).\
+Python should be downloaded and installed from their [website](https://www.python.org/). The newest version (or most versions 3.x) will work.
+For CMD, the path to Python might need to be added manually. A guide can be found [here](https://edu.google.com/openonline/course-builder/docs/1.10/set-up-course-builder/check-for-python.html).
 
 Once python is installed, use Pip to install pipenv in either CMD, Git Bash or PowerShell:\
-`python -m pip install pipenv`\
+`python -m pip pipenv sync`
 
 In CMD, Git Bash or PowerShell, cd into your work directory and clone this repository using Git:\
-`git clone https://github.com/madmalicius/RMTRMS.git`\
+`git clone https://github.com/madmalicius/RMTRMS.git`
 
-Navigate to the repository and to the Database folder: \
-`cd RMTRMS/Database`\
+Navigate to the repository and to the Database folder:\
+`cd RMTRMS/Database`
 
 Install the necessary Python packages:\
-`python -m pipenv install`\
+`python -m pipenv install`
 
 Activate the virtual environment:\
-`python -m pipenv shell`\
+`python -m pipenv shell`
 
 Create the database by running the script:\
 `python createDatabase.py`
