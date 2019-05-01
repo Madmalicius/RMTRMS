@@ -64,10 +64,10 @@ class Database:
             return None
 
     def get_tracker_list(self):
-        """Returns a list of tracker serials.
+        """Returns a list of tracker objects.
         
         Returns:
-            List -- list of Strings with known tracker serials.
+            List -- list of Tracker objects
         """
 
         try:
