@@ -49,6 +49,7 @@ def update_trackers(trackers, database):
 
 def new_database():
     global databasePath, databasePathVar
+    config = configparser.ConfigParser()
     path = filedialog.asksaveasfilename(
         initialdir=".",
         title="Create new database",
@@ -64,10 +65,15 @@ def new_database():
     createDatabase.create_database(path)
     databasePath = path
     databasePathVar.set("Database is: " + path)
+    config.read("config")
+    config.set("database", "path", path)
+    with open("config", "w") as f:
+        config.write(f)
 
 
 def open_database():
     global databasePath, databasePathVar
+    config = configparser.ConfigParser()
     path = filedialog.askopenfilename(
         initialdir=".",
         title="Open database",
@@ -79,6 +85,10 @@ def open_database():
 
     databasePath = path
     databasePathVar.set("Database is: " + path)
+    config.read("config")
+    config.set("database", "path", path)
+    with open("config", "w") as f:
+        config.write(f)
 
 
 def manage_trackers():
@@ -155,6 +165,7 @@ def trackerSelect(*args):
     # Check in DB where name is located
     hltTracker.set("this is " + trackers.get())
     print(trackers.get())
+    """TODO: Assign selected tracker to highlighted module"""
 
 
 def toggleTracking(database):
@@ -174,8 +185,19 @@ if __name__ == "__main__":
     vr.print_discovered_objects()
 
     config = configparser.ConfigParser()
-    config.read("config")
-    databasePath = config.get("database", "path")
+    try:
+        config.read("config")
+        databasePath = config.get("database", "path")
+    except configparser.NoSectionError:
+        databasePath = filedialog.askopenfilename()
+        if databasePath is "":
+            exit_program()
+        config.add_section("database")
+        config.set("database", "path", databasePath)
+        with open("config", "w") as f:
+            config.write(f)
+
+    databasePathVar.set("Database is: " + databasePath)
     database = Database(databasePath)
     trackerList = []
 
@@ -205,19 +227,6 @@ if __name__ == "__main__":
     # Add subtabs to Trackers
     trackerMenu.add_command(label="Refresh")
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
-
-    config = configparser.ConfigParser()
-    try:
-        config.read("config")
-        databasePath = config.get("database", "path")
-        databasePathVar.set("Database is: " + databasePath)
-    except configparser.NoSectionError:
-        open_database()
-        config.add_section("database")
-        config.set("database", "path", databasePath)
-
-    with open("config", "w") as f:
-        config.write(f)
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
@@ -256,7 +265,10 @@ if __name__ == "__main__":
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
-        root, text="Track module?", var=checkButtonStatus, command=lambda: toggleTracking(database)
+        root,
+        text="Track module?",
+        var=checkButtonStatus,
+        command=lambda: toggleTracking(database),
     )
     trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
 
