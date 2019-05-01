@@ -4,10 +4,10 @@ from sqlite3 import Error as sqliteError
 
 class Tracker:
     def __init__(self, vr=None, db=None, trackerID=None, serial=None):
+        self.db = db
         if vr:
             self.active = True
             self.vr = vr
-            self.db = db
             self.trackerID = trackerID
             self.serial = self.vr.devices[self.trackerID].get_serial()
             self.update_position()
@@ -84,7 +84,10 @@ class Database:
                 activeTrackers.append(Tracker(vr=self.vr, db=self, trackerID=device))
 
             for tracker in activeTrackers:
-                trackerList.remove(tracker.serial)
+                try:
+                    trackerList.remove(tracker.serial)
+                except ValueError:
+                    pass
 
             for index, tracker in enumerate(trackerList):
                 trackerList[index] = Tracker(db=self, serial=tracker)
@@ -300,6 +303,19 @@ class Database:
             print(e)
 
         self.db.commit()
+
+    def remove_tracker(self, tracker):
+        """Removes the specified tracker from the database
+
+        parameters:
+            tracker {Tracker} -- The tracker will be deleted
+        """
+
+        try:
+            self.curs.execute("DELETE FROM trackers WHERE serial = :serial", {"serial":tracker.serial})
+            self.db.commit()
+        except sqliteError as e:
+            print(e)
 
     def check_close(self):
         """Checks the close field of the database
