@@ -43,7 +43,6 @@ def search_for_tracker(vr):
 def update_trackers(trackers, database):
     for tracker in trackers:
         tracker.update_position()
-        database.update_tracker_position(tracker)
         print("updated " + tracker.serial)
     sleep(0.001)
 
@@ -91,6 +90,9 @@ def open_database():
     with open("config", "w") as f:
         config.write(f)
 
+def refresh_trackers(db):
+    global trackerArr
+    trackerArr = db.get_tracker_list()
 
 def manage_trackers():
     i = None
@@ -199,15 +201,12 @@ if __name__ == "__main__":
             config.write(f)
 
     databasePathVar.set("Database is: " + databasePath)
-    database = Database(databasePath)
+    database = Database(databasePath, vr)
     trackerList = []
 
     search_for_tracker(vr)
-    for device in vr.devices:
-        if "tracker" not in device:
-            continue
-        newTracker = Tracker(vr, device)
-        trackerList.append(newTracker)
+
+    trackerArr = database.get_tracker_list()
 
     menu = tk.Menu(root)
 
@@ -226,7 +225,7 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh")
+    trackerMenu.add_command(label="Refresh", command=refresh_trackers(database))
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
     # Show path to active database
