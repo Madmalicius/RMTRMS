@@ -177,7 +177,7 @@ def trackerSelect(*args):
 def toggleTracking(database):
     print("activated")
     print(checkButtonStatus.get())
-    database.set_tracking_status(hltModule.get(), checkButtonStatus.get())
+    database.set_module_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
 def testTread(databasePath, vr):
