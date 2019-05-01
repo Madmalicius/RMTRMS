@@ -33,6 +33,9 @@ class Tracker:
             self.roll = pose[5]
             
             self.db.update_tracker_position(self)
+    
+    def rename(self, name):
+        self.db.set_tracker_name(self, name)
 
 
 class Database:
