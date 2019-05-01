@@ -20,6 +20,7 @@ databasePath = ""
 
 hltModule = StringVar()
 hltTracker = StringVar()
+hltTrackerActive = StringVar()
 trackers = StringVar()
 trackerArr = []
 checkButtonStatus = IntVar()
@@ -256,12 +257,17 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=2, column=1, sticky=N)
+    trackerDropdown.grid(row=2, column=1, columnspan=2)
 
     # Tracker serial label
     hltTracker.set("No tracker chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=2, column=2, sticky=E + W + N)
+    trackerSerial.grid(row=3, column=1, columnspan=2)
+
+    # Tracker active
+    hltTrackerActive.set("No tracker chosen")
+    trackerActive = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTrackerActive)
+    trackerActive.grid(row=4, column=1, columnspan=2, sticky=N)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
@@ -270,7 +276,7 @@ if __name__ == "__main__":
         var=checkButtonStatus,
         command=lambda: toggleTracking(database),
     )
-    trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
+    trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[trackerList, databasePath])
