@@ -21,15 +21,18 @@ databasePath = ""
 hltModule = StringVar()
 hltTracker = StringVar()
 hltTrackerActive = StringVar()
-trackers = StringVar()
+selectedTracker = StringVar()
+
 trackerArr = []
+trackerNameArr = []
+
 checkButtonStatus = IntVar()
 
 
 def search_for_tracker(vr):
     trackerCount, searchCount = 0, 0
     while trackerCount is 0 and searchCount < 5000:
-        print("\rSearching for trackers", end="")
+        print("\rSearching for trackers\n", end="")
         vr.update_device_list()
         for device in vr.devices:
             if "tracker" not in device:
@@ -40,8 +43,8 @@ def search_for_tracker(vr):
                 trackerCount += 1
 
 
-def update_trackers(trackers, database):
-    for tracker in trackers:
+def update_trackers(selectedTracker, database):
+    for tracker in selectedTracker:
         tracker.update_position()
         print("updated " + tracker.serial)
     sleep(0.001)
@@ -93,11 +96,13 @@ def open_database():
 def refresh_trackers(db):
     global trackerArr
     trackerArr = db.get_tracker_list()
+    for tracker in trackerArr:
+        trackerNameArr.append(tracker.name)
     
     trackerDropdown["menu"].delete(0,"end")
     for tracker in trackerArr:
         trackerDropdown["menu"].add_command(
-            label=tracker, command=tk._setit(trackers, tracker)
+            label=tracker, command=tk._setit(selectedTracker, tracker)
     )
 
 def manage_trackers():
@@ -113,7 +118,7 @@ def manage_trackers():
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
 
     for index, tracker in enumerate(trackerArr, start=0):
-        if tracker == trackers.get():
+        if tracker == selectedTracker.get():
             i = index
         trackerList.insert(index, tracker)
 
@@ -137,16 +142,16 @@ def update_tracker_list(List, name, array, index):
 
     print(i)
     trackerArr[i[0]] = name.get()
-    trackers.set("")
+    selectedTracker.set("")
     trackerDropdown["menu"].delete(0, "end")
     for tracker in trackerArr:
         trackerDropdown["menu"].add_command(
-            label=tracker, command=tk._setit(trackers, tracker)
+            label=tracker, command=tk._setit(selectedTracker, tracker)
         )
     if index:
-        trackers.set(trackerArr[index])
+        selectedTracker.set(trackerArr[index])
     else:
-        trackers.set("Choose tracker")
+        selectedTracker.set("Choose tracker")
 
 
 def rename(List, name):
@@ -172,8 +177,8 @@ def updateModuleSelect(event, database):
 
 def trackerSelect(*args):
     # Check in DB where name is located
-    hltTracker.set("this is " + trackers.get())
-    print(trackers.get())
+    hltTracker.set("this is " + selectedTracker.get())
+    print(selectedTracker.get())
     """TODO: Assign selected tracker to highlighted module"""
 
 
@@ -183,10 +188,10 @@ def toggleTracking(database):
     database.set_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
-def testTread(trackers, databasePath):
+def testTread(selectedTracker, databasePath):
     database = Database(databasePath)
     while threading.main_thread().isAlive():
-        update_trackers(trackers, database)
+        update_trackers(selectedTracker, database)
 
 
 if __name__ == "__main__":
@@ -213,6 +218,8 @@ if __name__ == "__main__":
     search_for_tracker(vr)
 
     trackerArr = database.get_tracker_list()
+    for tracker in trackerArr:
+        trackerNameArr.append(tracker.name)
 
     menu = tk.Menu(root)
 
@@ -255,9 +262,9 @@ if __name__ == "__main__":
     moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
 
     # Tracker choice
-    trackers.set("Choose tracker")
-    trackers.trace("w", trackerSelect)
-    trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
+    selectedTracker.set("Choose tracker")
+    selectedTracker.trace("w", trackerSelect)
+    trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
     trackerDropdown.grid(row=2, column=1, columnspan=2)
