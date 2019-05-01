@@ -43,10 +43,9 @@ def search_for_tracker(vr):
                 trackerCount += 1
 
 
-def update_trackers(selectedTracker, database):
-    for tracker in selectedTracker:
+def update_trackers(trackers):
+    for tracker in trackers:
         tracker.update_position()
-        print("updated " + tracker.serial)
     sleep(0.001)
 
 
@@ -107,7 +106,7 @@ def refresh_trackers(db):
             label=tracker, command=tk._setit(selectedTracker, tracker)
     )
 
-def manage_trackers():
+def manage_trackers(db):
     i = None
 
     # Create window
@@ -133,40 +132,31 @@ def manage_trackers():
     acceptName = tk.Button(
         trackerWindow,
         text="Ok",
-        command=lambda: update_tracker_list(trackerList, newTrackerName, trackerArr, i),
+        command=lambda: update_tracker_list(db, trackerList, newTrackerName),
     )
     acceptName.grid(row=2, column=3)
 
 
-def update_tracker_list(List, name, array, index):
-    i = List.curselection()
-    rename(List, name)
+def update_tracker_list(db, trackerList, name):
+    i = trackerList.curselection()
+    rename(trackerList, name)
 
-    print(i)
-    trackerArr[i[0]] = name.get()
-    selectedTracker.set("")
-    trackerDropdown["menu"].delete(0, "end")
+    refresh_trackers(db)
+
+    trackerList.delete(0,"end")
+    for index, trackerName in enumerate(trackerNameArr, start=0):
+        trackerList.insert(index, trackerName)
+
+
+def rename(nameList, name):
+    i = nameList.curselection()
+    if i is None:
+        return None
     for tracker in trackerArr:
-        trackerDropdown["menu"].add_command(
-            label=tracker, command=tk._setit(selectedTracker, tracker)
-        )
-    if index:
-        selectedTracker.set(trackerArr[index])
-    else:
-        selectedTracker.set("Choose tracker")
+        if tracker.name == nameList.get(i[0]):
+            tracker.rename(str(name.get()))
+    
 
-
-def rename(List, name):
-    i = List.curselection()
-    print(i)
-    if i:
-        print("woo!")
-        tmp = List.get(i[0])
-        List.delete(i)
-        List.insert(i, name.get())
-
-    else:
-        print("nooo!")
 
 
 def updateModuleSelect(event, database):
@@ -187,13 +177,14 @@ def trackerSelect(*args):
 def toggleTracking(database):
     print("activated")
     print(checkButtonStatus.get())
-    database.set_tracking_status(hltModule.get(), checkButtonStatus.get())
+    database.set_module_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
-def testTread(selectedTracker, databasePath):
-    database = Database(databasePath)
+def testTread(databasePath, vr):
+    database = Database(databasePath, vr)
+    trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
-        update_trackers(selectedTracker, database)
+        update_trackers(trackerList)
 
 
 if __name__ == "__main__":
@@ -215,7 +206,6 @@ if __name__ == "__main__":
 
     databasePathVar.set("Database is: " + databasePath)
     database = Database(databasePath, vr)
-    trackerList = []
 
     search_for_tracker(vr)
 
@@ -242,7 +232,7 @@ if __name__ == "__main__":
 
     # Add subtabs to Trackers
     trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
-    trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
+    trackerMenu.add_command(label="Manage Trackers", command=lambda: manage_trackers(database))
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
@@ -292,7 +282,7 @@ if __name__ == "__main__":
     trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
 
     # Create and run thread & GUI
-    test = Thread(target=testTread, args=[trackerList, databasePath])
+    test = Thread(target=testTread, args=[databasePath, vr])
     test.start()
 
     root.mainloop()
