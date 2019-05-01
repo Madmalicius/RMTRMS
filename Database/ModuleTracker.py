@@ -32,7 +32,7 @@ checkButtonStatus = IntVar()
 def search_for_tracker(vr):
     trackerCount, searchCount = 0, 0
     while trackerCount is 0 and searchCount < 5000:
-        print("\rSearching for trackers\n", end="")
+        print("\rSearching for trackers", end="")
         vr.update_device_list()
         for device in vr.devices:
             if "tracker" not in device:
@@ -94,13 +94,15 @@ def open_database():
         config.write(f)
 
 def refresh_trackers(db):
-    global trackerArr
+    global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
+    trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
-    
+    trackerNameArr.sort()
+
     trackerDropdown["menu"].delete(0,"end")
-    for tracker in trackerArr:
+    for tracker in trackerNameArr:
         trackerDropdown["menu"].add_command(
             label=tracker, command=tk._setit(selectedTracker, tracker)
     )
@@ -117,7 +119,7 @@ def manage_trackers():
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
 
-    for index, tracker in enumerate(trackerArr, start=0):
+    for index, tracker in enumerate(trackerNameArr, start=0):
         if tracker == selectedTracker.get():
             i = index
         trackerList.insert(index, tracker)
@@ -125,13 +127,13 @@ def manage_trackers():
     # tracker renaming
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
     trackerNameLabel.grid(row=2, column=1, sticky=E + W)
-    trackerName = tk.Entry(trackerWindow)
-    trackerName.grid(row=2, column=2, sticky=E + W)
+    newTrackerName = tk.Entry(trackerWindow)
+    newTrackerName.grid(row=2, column=2, sticky=E + W)
 
     acceptName = tk.Button(
         trackerWindow,
         text="Ok",
-        command=lambda: update_tracker_list(trackerList, trackerName, trackerArr, i),
+        command=lambda: update_tracker_list(trackerList, newTrackerName, trackerArr, i),
     )
     acceptName.grid(row=2, column=3)
 
@@ -220,6 +222,7 @@ if __name__ == "__main__":
     trackerArr = database.get_tracker_list()
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
+    trackerNameArr.sort()
 
     menu = tk.Menu(root)
 
@@ -238,7 +241,7 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh", command=lambda:refresh_trackers(database))
+    trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
     # Show path to active database
