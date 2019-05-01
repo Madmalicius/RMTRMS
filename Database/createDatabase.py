@@ -24,6 +24,7 @@ def create_database(path="Modules.db"):
     id INTEGER PRIMARY KEY,
     name TEXT,
     serial TEXT UNIQUE NOT NULL,
+    active BOOL NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
     positionZ FLOAT NOT NULL,
