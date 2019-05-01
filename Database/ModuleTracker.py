@@ -93,6 +93,12 @@ def open_database():
 def refresh_trackers(db):
     global trackerArr
     trackerArr = db.get_tracker_list()
+    
+    trackerDropdown["menu"].delete(0,"end")
+    for tracker in trackerArr:
+        trackerDropdown["menu"].add_command(
+            label=tracker, command=tk._setit(trackers, tracker)
+    )
 
 def manage_trackers():
     i = None
@@ -225,7 +231,7 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh", command=refresh_trackers(database))
+    trackerMenu.add_command(label="Refresh", command=lambda:refresh_trackers(database))
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
     # Show path to active database
@@ -249,8 +255,6 @@ if __name__ == "__main__":
     moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
 
     # Tracker choice
-    for i in range(0, 5):
-        trackerArr.append("tracker " + str(i + 1))
     trackers.set("Choose tracker")
     trackers.trace("w", trackerSelect)
     trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
