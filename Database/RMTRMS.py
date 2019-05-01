@@ -158,16 +158,16 @@ class Database:
 
         self.db.commit()
 
-    def set_tracker_tracking_status(self, tracker, status):
-        """Sets the tracking status of the specified tracker in the database
+    def set_tracker_active_status(self, tracker, status):
+        """Sets the active status of the specified tracker in the database
 
         Arguments:
-            tracker {Tracker} -- The tracker of which the status will be modified.
-            status {bool} -- The tracking status of the tracker.
+            tracker {Tracker} -- The active of which the status will be modified.
+            status {bool} -- The active status of the tracker.
         """
         try:
             self.curs.execute(
-                "UPDATE trackers SET tracked=:status WHERE serial=:serial",
+                "UPDATE trackers SET active=:status WHERE serial=:serial",
                 (status, tracker.serial),
             )
         except sqliteError as e:
