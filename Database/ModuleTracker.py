@@ -20,6 +20,7 @@ databasePath = ""
 
 hltModule = StringVar()
 hltTracker = StringVar()
+hltTrackerActive = StringVar()
 trackers = StringVar()
 trackerArr = []
 checkButtonStatus = IntVar()
@@ -49,6 +50,7 @@ def update_trackers(trackers, database):
 
 def new_database():
     global databasePath, databasePathVar
+    config = configparser.ConfigParser()
     path = filedialog.asksaveasfilename(
         initialdir=".",
         title="Create new database",
@@ -64,10 +66,15 @@ def new_database():
     createDatabase.create_database(path)
     databasePath = path
     databasePathVar.set("Database is: " + path)
+    config.read("config")
+    config.set("database", "path", path)
+    with open("config", "w") as f:
+        config.write(f)
 
 
 def open_database():
     global databasePath, databasePathVar
+    config = configparser.ConfigParser()
     path = filedialog.askopenfilename(
         initialdir=".",
         title="Open database",
@@ -79,6 +86,10 @@ def open_database():
 
     databasePath = path
     databasePathVar.set("Database is: " + path)
+    config.read("config")
+    config.set("database", "path", path)
+    with open("config", "w") as f:
+        config.write(f)
 
 
 def manage_trackers():
@@ -155,6 +166,7 @@ def trackerSelect(*args):
     # Check in DB where name is located
     hltTracker.set("this is " + trackers.get())
     print(trackers.get())
+    """TODO: Assign selected tracker to highlighted module"""
 
 
 def toggleTracking(database):
@@ -174,8 +186,19 @@ if __name__ == "__main__":
     vr.print_discovered_objects()
 
     config = configparser.ConfigParser()
-    config.read("config")
-    databasePath = config.get("database", "path")
+    try:
+        config.read("config")
+        databasePath = config.get("database", "path")
+    except configparser.NoSectionError:
+        databasePath = filedialog.askopenfilename()
+        if databasePath is "":
+            exit_program()
+        config.add_section("database")
+        config.set("database", "path", databasePath)
+        with open("config", "w") as f:
+            config.write(f)
+
+    databasePathVar.set("Database is: " + databasePath)
     database = Database(databasePath)
     trackerList = []
 
@@ -206,19 +229,6 @@ if __name__ == "__main__":
     trackerMenu.add_command(label="Refresh")
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
-    config = configparser.ConfigParser()
-    try:
-        config.read("config")
-        databasePath = config.get("database", "path")
-        databasePathVar.set("Database is: " + databasePath)
-    except configparser.NoSectionError:
-        open_database()
-        config.add_section("database")
-        config.set("database", "path", databasePath)
-
-    with open("config", "w") as f:
-        config.write(f)
-
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
     databasePathWidget.grid(columnspan=5, sticky=E + W)
@@ -247,18 +257,26 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=2, column=1, sticky=N)
+    trackerDropdown.grid(row=2, column=1, columnspan=2)
 
     # Tracker serial label
     hltTracker.set("No tracker chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=2, column=2, sticky=E + W + N)
+    trackerSerial.grid(row=3, column=1, columnspan=2)
+
+    # Tracker active
+    hltTrackerActive.set("No tracker chosen")
+    trackerActive = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTrackerActive)
+    trackerActive.grid(row=4, column=1, columnspan=2, sticky=N)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
-        root, text="Track module?", var=checkButtonStatus, command=lambda: toggleTracking(database)
+        root,
+        text="Track module?",
+        var=checkButtonStatus,
+        command=lambda: toggleTracking(database),
     )
-    trackerCheckbox.grid(row=3, column=1, sticky=N + E + W)
+    trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[trackerList, databasePath])
