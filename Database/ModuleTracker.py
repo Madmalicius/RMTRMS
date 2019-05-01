@@ -21,8 +21,11 @@ databasePath = ""
 hltModule = StringVar()
 hltTracker = StringVar()
 hltTrackerActive = StringVar()
-trackers = StringVar()
+selectedTracker = StringVar()
+
 trackerArr = []
+trackerNameArr = []
+
 checkButtonStatus = IntVar()
 
 
@@ -40,8 +43,8 @@ def search_for_tracker(vr):
                 trackerCount += 1
 
 
-def update_trackers(trackers, database):
-    for tracker in trackers:
+def update_trackers(selectedTracker, database):
+    for tracker in selectedTracker:
         tracker.update_position()
         print("updated " + tracker.serial)
     sleep(0.001)
@@ -91,13 +94,17 @@ def open_database():
         config.write(f)
 
 def refresh_trackers(db):
-    global trackerArr
+    global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
-    
-    trackerDropdown["menu"].delete(0,"end")
+    trackerNameArr = []
     for tracker in trackerArr:
+        trackerNameArr.append(tracker.name)
+    trackerNameArr.sort()
+
+    trackerDropdown["menu"].delete(0,"end")
+    for tracker in trackerNameArr:
         trackerDropdown["menu"].add_command(
-            label=tracker, command=tk._setit(trackers, tracker)
+            label=tracker, command=tk._setit(selectedTracker, tracker)
     )
 
 def manage_trackers():
@@ -112,21 +119,21 @@ def manage_trackers():
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
 
-    for index, tracker in enumerate(trackerArr, start=0):
-        if tracker == trackers.get():
+    for index, tracker in enumerate(trackerNameArr, start=0):
+        if tracker == selectedTracker.get():
             i = index
         trackerList.insert(index, tracker)
 
     # tracker renaming
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
     trackerNameLabel.grid(row=2, column=1, sticky=E + W)
-    trackerName = tk.Entry(trackerWindow)
-    trackerName.grid(row=2, column=2, sticky=E + W)
+    newTrackerName = tk.Entry(trackerWindow)
+    newTrackerName.grid(row=2, column=2, sticky=E + W)
 
     acceptName = tk.Button(
         trackerWindow,
         text="Ok",
-        command=lambda: update_tracker_list(trackerList, trackerName, trackerArr, i),
+        command=lambda: update_tracker_list(trackerList, newTrackerName, trackerArr, i),
     )
     acceptName.grid(row=2, column=3)
 
@@ -137,16 +144,16 @@ def update_tracker_list(List, name, array, index):
 
     print(i)
     trackerArr[i[0]] = name.get()
-    trackers.set("")
+    selectedTracker.set("")
     trackerDropdown["menu"].delete(0, "end")
     for tracker in trackerArr:
         trackerDropdown["menu"].add_command(
-            label=tracker, command=tk._setit(trackers, tracker)
+            label=tracker, command=tk._setit(selectedTracker, tracker)
         )
     if index:
-        trackers.set(trackerArr[index])
+        selectedTracker.set(trackerArr[index])
     else:
-        trackers.set("Choose tracker")
+        selectedTracker.set("Choose tracker")
 
 
 def rename(List, name):
@@ -172,8 +179,8 @@ def updateModuleSelect(event, database):
 
 def trackerSelect(*args):
     # Check in DB where name is located
-    hltTracker.set("this is " + trackers.get())
-    print(trackers.get())
+    hltTracker.set("this is " + selectedTracker.get())
+    print(selectedTracker.get())
     """TODO: Assign selected tracker to highlighted module"""
 
 
@@ -183,10 +190,10 @@ def toggleTracking(database):
     database.set_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
-def testTread(trackers, databasePath):
+def testTread(selectedTracker, databasePath):
     database = Database(databasePath)
     while threading.main_thread().isAlive():
-        update_trackers(trackers, database)
+        update_trackers(selectedTracker, database)
 
 
 if __name__ == "__main__":
@@ -213,6 +220,9 @@ if __name__ == "__main__":
     search_for_tracker(vr)
 
     trackerArr = database.get_tracker_list()
+    for tracker in trackerArr:
+        trackerNameArr.append(tracker.name)
+    trackerNameArr.sort()
 
     menu = tk.Menu(root)
 
@@ -231,7 +241,7 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh", command=lambda:refresh_trackers(database))
+    trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
     trackerMenu.add_command(label="Manage Trackers", command=manage_trackers)
 
     # Show path to active database
@@ -255,9 +265,9 @@ if __name__ == "__main__":
     moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
 
     # Tracker choice
-    trackers.set("Choose tracker")
-    trackers.trace("w", trackerSelect)
-    trackerDropdown = tk.OptionMenu(root, trackers, *trackerArr)
+    selectedTracker.set("Choose tracker")
+    selectedTracker.trace("w", trackerSelect)
+    trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
     trackerDropdown.grid(row=2, column=1, columnspan=2)
