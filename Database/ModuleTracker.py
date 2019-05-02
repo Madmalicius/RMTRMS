@@ -92,6 +92,7 @@ def open_database():
     with open("config", "w") as f:
         config.write(f)
 
+
 def refresh_trackers(db):
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
@@ -100,11 +101,12 @@ def refresh_trackers(db):
         trackerNameArr.append(tracker.name)
     trackerNameArr.sort()
 
-    trackerDropdown["menu"].delete(0,"end")
+    trackerDropdown["menu"].delete(0, "end")
     for tracker in trackerNameArr:
         trackerDropdown["menu"].add_command(
             label=tracker, command=tk._setit(selectedTracker, tracker)
-    )
+        )
+
 
 def manage_trackers(db):
     i = None
@@ -143,7 +145,7 @@ def update_tracker_list(db, trackerList, name):
 
     refresh_trackers(db)
 
-    trackerList.delete(0,"end")
+    trackerList.delete(0, "end")
     for index, trackerName in enumerate(trackerNameArr, start=0):
         trackerList.insert(index, trackerName)
 
@@ -155,8 +157,6 @@ def rename(nameList, name):
     for tracker in trackerArr:
         if tracker.name == nameList.get(i[0]):
             tracker.rename(str(name.get()))
-    
-
 
 
 def updateModuleSelect(event, database):
@@ -232,11 +232,13 @@ if __name__ == "__main__":
 
     # Add subtabs to Trackers
     trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
-    trackerMenu.add_command(label="Manage Trackers", command=lambda: manage_trackers(database))
+    trackerMenu.add_command(
+        label="Manage Trackers", command=lambda: manage_trackers(database)
+    )
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
-    databasePathWidget.grid(columnspan=5, sticky=E + W)
+    databasePathWidget.grid(columnspan=4, sticky=E + W)
 
     # List of known modules
     moduleList = tk.Listbox(root)
@@ -269,7 +271,9 @@ if __name__ == "__main__":
 
     # Tracker active
     hltTrackerActive.set("No tracker chosen")
-    trackerActive = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTrackerActive)
+    trackerActive = tk.Label(
+        root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
+    )
     trackerActive.grid(row=4, column=1, columnspan=2, sticky=N)
 
     # Checkbox for using tracker on module
@@ -280,6 +284,10 @@ if __name__ == "__main__":
         command=lambda: toggleTracking(database),
     )
     trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
+
+    # Apply button
+    applyButton = tk.Button(root, text="Apply")
+    applyButton.grid(row=5, column=3, sticky=N)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[databasePath, vr])
