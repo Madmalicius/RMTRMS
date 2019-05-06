@@ -257,7 +257,7 @@ class Database:
 
         try:
             self.curs.execute(
-                "DELETE tracker FROM modules WHERE tracker=:tracker",
+                "UPDATE modules SET tracker=? WHERE tracker=:tracker",
                 {"tracker": tracker.serial},
             )
             self.curs.execute(sql, params)
