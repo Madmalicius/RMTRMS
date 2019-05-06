@@ -138,10 +138,24 @@ def manage_trackers(db):
     )
     acceptName.grid(row=2, column=3)
 
+    removeTrackerButton = tk.Button(
+        trackerWindow, text="delete", command=lambda: removeTracker(db, trackerList)
+    )
 
-def update_tracker_list(db, trackerList, name):
+
+def removeTracker(db, trackerList):
+    if trackerList.curselection():
+        for tracker in trackerArr:
+            if tracker.name == trackerList.get(trackerList.curselection()):
+                db.remove_tracker(tracker)
+        update_tracker_list(db, trackerList)
+
+
+def update_tracker_list(db, trackerList, name=None):
     i = trackerList.curselection()
-    rename(trackerList, name)
+
+    if name:
+        rename(trackerList, name)
 
     refresh_trackers(db)
 
@@ -163,6 +177,11 @@ def updateModuleSelect(event, database):
     if moduleList.curselection():
         hltModule.set(moduleList.get(moduleList.curselection()))
         checkButtonStatus.set(database.get_tracking_status(hltModule.get()))
+        assignedTracker = database.get_assigned_tracker(hltModule.get())
+        if assignedTracker:
+            selectedTracker.set(assignedTracker.name)
+        else:
+            selectedTracker.set("Choose tracker")
     else:
         hltModule.set("")
 
@@ -178,6 +197,17 @@ def toggleTracking(database):
     print("activated")
     print(checkButtonStatus.get())
     database.set_module_tracking_status(hltModule.get(), checkButtonStatus.get())
+
+
+def assignTrackerToModule(database):
+    for tracker in trackerArr:
+        if tracker.name == selectedTracker.get():
+            database.assign_tracker(hltModule.get(), tracker)
+
+
+def saveChanges(database):
+    toggleTracking(database)
+    assignTrackerToModule(database)
 
 
 def testTread(databasePath, vr):
@@ -254,7 +284,7 @@ if __name__ == "__main__":
     moduleName = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
-    moduleName.grid(row=1, column=1, columnspan=2, sticky=E + W)
+    moduleName.grid(row=1, column=1, sticky=E + W)
 
     # Tracker choice
     selectedTracker.set("Choose tracker")
@@ -262,29 +292,27 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=2, column=1, columnspan=2)
+    trackerDropdown.grid(row=2, column=1)
 
     # Tracker serial label
     hltTracker.set("No tracker chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=3, column=1, columnspan=2)
+    trackerSerial.grid(row=3, column=1)
 
     # Tracker active
     hltTrackerActive.set("No tracker chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
-    trackerActive.grid(row=4, column=1, columnspan=2, sticky=N)
+    trackerActive.grid(row=4, column=1, sticky=N)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?", var=checkButtonStatus)
-    trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
+    trackerCheckbox.grid(row=1, column=2)
 
     # Apply button
-    applyButton = tk.Button(
-        root, text="Apply", command=lambda: toggleTracking(database)
-    )
-    applyButton.grid(row=5, column=3, sticky=N)
+    applyButton = tk.Button(root, text="Apply", command=lambda: saveChanges(database))
+    applyButton.grid(row=4, column=2, sticky=N)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[databasePath, vr])
@@ -292,3 +320,4 @@ if __name__ == "__main__":
 
     root.mainloop()
 
+    exit()
