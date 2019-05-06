@@ -16,11 +16,13 @@ steamVRSettings = os.path.join(
 steamVRPath = "C:\Program Files (x86)\Steam\config\steamvr.vrsettings"
 steamVRBakPath = "C:\Program Files (x86)\Steam\config\steamvr.vrsettings.bak"
 
-if __name__ == "__main__":
-
+def configure():
     try:
         shutil.copyfile(steamVRPath, steamVRBakPath)
         shutil.copyfile(steamVRSettings, steamVRPath)
         print("Configured!\n")
     except shutil.Error as e:
         print(e)
+
+if __name__ == "__main__":
+    configure()

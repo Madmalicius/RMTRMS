@@ -7,8 +7,15 @@ from threading import Thread
 from time import sleep
 import configparser
 import triad_openvr
-import createDatabase
 from RMTRMS import Database, Tracker
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/SteamVR")
+import createDatabase
+from configure import configure
+from restore import restore
+
 
 root = tk.Tk()
 
@@ -251,10 +258,12 @@ if __name__ == "__main__":
 
     fileMenu = tk.Menu(menu, tearoff=False)
     trackerMenu = tk.Menu(menu, tearoff=False)
+    vrMenu = tk.Menu(menu, tearoff=False)
 
     # Add tabs to Menu
     menu.add_cascade(label="File", menu=fileMenu)
     menu.add_cascade(label="Trackers", menu=trackerMenu)
+    menu.add_cascade(label="SteamVR", menu=vrMenu)
 
     # Add subtabs to File
     fileMenu.add_command(label="Create database", command=new_database)
@@ -265,6 +274,10 @@ if __name__ == "__main__":
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
     )
+
+    # Add subtabs to vrMenu
+    vrMenu.add_command(label="Configure", command=configure())
+    vrMenu.add_command(label="Restore", command=restore())
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
