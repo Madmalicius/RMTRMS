@@ -277,16 +277,13 @@ if __name__ == "__main__":
     trackerActive.grid(row=4, column=1, columnspan=2, sticky=N)
 
     # Checkbox for using tracker on module
-    trackerCheckbox = tk.Checkbutton(
-        root,
-        text="Track module?",
-        var=checkButtonStatus,
-        command=lambda: toggleTracking(database),
-    )
+    trackerCheckbox = tk.Checkbutton(root, text="Track module?", var=checkButtonStatus)
     trackerCheckbox.grid(row=5, column=1, sticky=N, columnspan=2)
 
     # Apply button
-    applyButton = tk.Button(root, text="Apply")
+    applyButton = tk.Button(
+        root, text="Apply", command=lambda: toggleTracking(database)
+    )
     applyButton.grid(row=5, column=3, sticky=N)
 
     # Create and run thread & GUI
