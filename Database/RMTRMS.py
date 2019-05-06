@@ -256,6 +256,10 @@ class Database:
               """
 
         try:
+            self.curs.execute(
+                "DELETE tracker FROM modules WHERE tracker=:tracker",
+                {"tracker": tracker.serial},
+            )
             self.curs.execute(sql, params)
         except sqliteError as e:
             print(e)
