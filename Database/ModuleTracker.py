@@ -152,7 +152,7 @@ def update_tracker_list(db, trackerList, name):
 
 def rename(nameList, name):
     i = nameList.curselection()
-    if i is None:
+    if not i:
         return None
     for tracker in trackerArr:
         if tracker.name == nameList.get(i[0]):
