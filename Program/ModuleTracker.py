@@ -10,6 +10,7 @@ import triad_openvr
 from RMTRMS import Database, Tracker
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/SteamVR")
 import createDatabase
@@ -266,8 +267,8 @@ if __name__ == "__main__":
     menu.add_cascade(label="SteamVR", menu=vrMenu)
 
     # Add subtabs to File
-    fileMenu.add_command(label="Create database", command=new_database)
-    fileMenu.add_command(label="Open database", command=open_database)
+    fileMenu.add_command(label="Create database", command=lambda: new_database)
+    fileMenu.add_command(label="Open database", command=lambda: open_database)
 
     # Add subtabs to Trackers
     trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
@@ -276,8 +277,8 @@ if __name__ == "__main__":
     )
 
     # Add subtabs to vrMenu
-    vrMenu.add_command(label="Configure", command=configure())
-    vrMenu.add_command(label="Restore", command=restore())
+    vrMenu.add_command(label="Configure", command=configure)
+    vrMenu.add_command(label="Restore", command=restore)
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
@@ -328,9 +329,9 @@ if __name__ == "__main__":
     applyButton.grid(row=4, column=2, sticky=N)
 
     # Create and run thread & GUI
-    test = Thread(target=testTread, args=[databasePath, vr])
+    test = Thread(target=testTread, args=[databasePath, vr], daemon=False)
     test.start()
 
     root.mainloop()
 
-    exit()
+    database.db.close()
