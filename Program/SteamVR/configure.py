@@ -18,7 +18,9 @@ steamVRBakPath = "C:\Program Files (x86)\Steam\config\steamvr.vrsettings.bak"
 
 def configure():
     try:
-        shutil.copyfile(steamVRPath, steamVRBakPath)
+        if not os.path.isfile(steamVRBakPath):
+            shutil.copyfile(steamVRPath, steamVRBakPath)
+            print("Back-up created.\n")
         shutil.copyfile(steamVRSettings, steamVRPath)
         print("Configured!\n")
     except shutil.Error as e:
