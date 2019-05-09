@@ -141,8 +141,10 @@ dmypy.json
 *.spp.bak
 
 # SQLite
-
 *.db
 
 # Config
 config
+
+# Backup
+*.bak
