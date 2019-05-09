@@ -3,7 +3,7 @@ var sql,module:string;
 moduleList.create;
 
 for var i := 1 to .Models.Frame.numNodes
-	if .Models.Frame.node(i).class = .UserObjects.Frame then
+	if .Models.Frame.node(i).class = .UserObjects.Frame OR .Models.Frame.node(i).class = .MaterialFlow.SingleProc then
 		moduleList.append(.models.Frame.Node(i));
 	end
 next
