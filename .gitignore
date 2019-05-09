@@ -138,7 +138,6 @@ dmypy.json
 
 # Tecnomatix
 *.spp
-*.spp.bak
 
 # SQLite
 *.db
