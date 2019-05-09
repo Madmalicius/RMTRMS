@@ -143,3 +143,6 @@ dmypy.json
 # SQLite
 
 *.db
+
+# Config
+config
