@@ -9,6 +9,7 @@ import configparser
 import triad_openvr
 from RMTRMS import Database, Tracker
 import os
+import webbrowser
 import sys
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
@@ -123,6 +124,11 @@ def manage_trackers(db):
     trackerWindow = tk.Toplevel(root)
     trackerWindow.title("Manage Trackers")
     trackerWindow.grab_set()
+
+    # Tracker list label
+    trackerListLabel = tk.Label(trackerWindow, text="Trackers")
+    trackerListLabel.grid(sticky=S)
+
 
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
@@ -280,16 +286,24 @@ if __name__ == "__main__":
     vrMenu.add_command(label="Configure", command=configure)
     vrMenu.add_command(label="Restore", command=restore)
 
+    # Add help & About buttons
+    menu.add_command(label="Help", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/blob/master/README.md"))
+    menu.add_command(label="About", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/graphs/contributors"))
+
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
     databasePathWidget.grid(columnspan=4, sticky=E + W)
+
+    # Module list label
+    moduleListLabel = tk.Label(root, text="Modules", bg="#B0C4DE", font=10)
+    moduleListLabel.grid(row=1, sticky=W+S, padx=20)
 
     # List of known modules
     moduleList = tk.Listbox(root)
     moduleList.bind(
         "<ButtonRelease-1>", lambda event: updateModuleSelect(event, database)
     )
-    moduleList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=N + S + W)
+    moduleList.grid(row=2, rowspan=4, padx=10, pady=5, sticky=N + S + W)
     modules = database.get_module_list()
     for index, module in enumerate(modules, start=0):
         moduleList.insert(index, module)
@@ -298,7 +312,7 @@ if __name__ == "__main__":
     moduleName = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
-    moduleName.grid(row=1, column=1, sticky=E + W)
+    moduleName.grid(row=1, rowspan=2, column=1, sticky=E + W + S)
 
     # Tracker choice
     selectedTracker.set("Choose tracker")
@@ -306,27 +320,27 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=2, column=1)
+    trackerDropdown.grid(row=3, column=1)
 
     # Tracker serial label
     hltTracker.set("No tracker chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=3, column=1)
+    trackerSerial.grid(row=4, column=1)
 
     # Tracker active
     hltTrackerActive.set("No tracker chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
-    trackerActive.grid(row=4, column=1, sticky=N)
+    trackerActive.grid(row=5, column=1, sticky=N)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(root, text="Track module?", var=checkButtonStatus)
-    trackerCheckbox.grid(row=1, column=2)
+    trackerCheckbox.grid(row=1, rowspan=2, column=2, sticky=S)
 
     # Apply button
     applyButton = tk.Button(root, text="Apply", command=lambda: saveChanges(database))
-    applyButton.grid(row=4, column=2, sticky=N)
+    applyButton.grid(row=5, column=2, sticky=N)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[databasePath, vr], daemon=False)
