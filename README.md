@@ -2,7 +2,9 @@
 
 Realtime Module Tracking for Reconfigurable Manufacturing Systems
 
-## Software Requirements
+## Setting up the system
+
+### Software Requirements
 
 - Windows
 - Git
@@ -11,7 +13,7 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 - Python
 - pipenv
 
-## Setting up environment
+### Setting up environment
 
 Your computer must have both Siemens Tecnomatics and SteamVR installed.
 
@@ -42,7 +44,7 @@ Activate the virtual environment:\
 Create the database by running the script:\
 `python createDatabase.py`
 
-## Setting up SteamVR to run HMD-less
+### Setting up SteamVR to run HMD-less
 
 [Triad Semi](http://help.triadsemi.com/steamvr-tracking/steamvr-tracking-without-an-hmd) has a great guide on how to run SteamVR without a headset.
 
@@ -59,7 +61,7 @@ After this, you should be able to unplug the headset and box and run SteamVR usi
 <b>NOTE</b>\
 SteamVR may give errors such as "Compositor is not running", "room setup is invalid", but these will not effect the system.
 
-## Setting up Siemens Tecnomatix
+### Setting up Siemens Tecnomatix
 
 To setup the Tecnomatix simulation, create a new 2D model with the following components:
 
@@ -107,3 +109,50 @@ Tecnomatix needs access to the computer. This is given by going to _File>Model S
 Lastly, click the _Home>Navigate>Open 2D/3D_ button, accept the default 3D graphics.
 
 Run the simulation by clicking _Home>Event Controller>Start/stop Simulation_.
+
+## Using the GUI
+
+Running the GUI gives the opportunity to assign and manage trackers to modules created in Tecnomatix.
+
+### Main Window Interface
+
+On the main window, the list on the left side shows all modules created in Tecnomatix. This list includes _User Object Frames_ and _Single Procs_.
+
+The white label in the middle of the GUI displays the name of the selected module from the list.
+
+Above the label, the path to the currently loaded database file is shown.
+
+Underneath is a dropdown menu of all trackers available to be assigned to the selected module.
+
+The checkbox on the right side of the module label determines whether or not the specific module should be tracked in Tecnomatix.
+
+The Apply button assigns the current chosen tracker to the highlighted module along with changing the tracking status depending on the checkbox status.
+
+### Menu Options
+
+The GUI interface has several top menu options as well.
+
+**File**: With subtabs _Create Database_ and _Open Database_.
+
+- Create Database: creates a new SQLite database file and sets the path to the new file.
+- Open Database: load in an existing SQLite database file.
+
+**Trackers**: With subtabs _Refresh_ and _Manage Trackers_.
+
+- Refresh: Reloads the list of known trackers from the database.
+- Manage Trackers: Opens a new window for tracker management. See [Manage Trackers Window](#Manage-Trackers-Window).
+
+**SteamVR**: With subtabs _Configure_ and _Restore_.
+
+- Configure: Sets up SteamVR to run in headless mode so only lighthouses and trackers are needed.
+- Restore: Reverts SteamVR back to the default settings.
+
+**Help**: Opens the help page on Github.
+
+**About**: Opens the About page on Github.
+
+### Manage Trackers Window
+
+The Manage Trackers window shows a list of all known trackers with the ability to rename or delete them from the database.
+
+The desired name is entered into the textfield and the tracker to be renamed should be highlighted on the list to the left. The _Ok_ button saves the new name for the tracker in the database.
