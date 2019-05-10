@@ -4,11 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-black = "*"
+black = "==18.9b0"
+pyinstaller = "*"
 
 [packages]
 openvr = "*"
-tkinter = "*"
 
 [requires]
 python_version = "3.7"
