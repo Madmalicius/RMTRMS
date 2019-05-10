@@ -1,6 +1,18 @@
 # RTRMS
 
-Realtime Module Tracking for Reconfigurable Manufacturing Systems
+Realtime Module Tracking for Reconfigurable Manufacturing Systems.
+
+**Content**:
+
+- [Setting up the system](#Setting-up-the-system)
+  - [Software Requirements](#Software-Requirements)
+  - [Settign Up Environment](#Setting-Up-Environment)
+  - [Setting up SteamVR to run HMD-less](#Setting-up-SteamVR-to-run-HMD-less)
+  - [Setting up Siemens Tecnomatix](#Setting-up-Siemens-Tecnomatix)
+- [Using the GUI](#Using-the-GUI)
+  - [Menu Options](#Menu-Options)
+  - [Main Window Interface](#Main-Window-Interface)
+  - [Manage Trackers Window](#Manage-Trackers-Window)
 
 ## Setting up the system
 
@@ -13,7 +25,7 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems
 - Python
 - pipenv
 
-### Setting up environment
+### Setting Up Environment
 
 Your computer must have both Siemens Tecnomatics and SteamVR installed.
 
@@ -112,25 +124,11 @@ Run the simulation by clicking _Home>Event Controller>Start/stop Simulation_.
 
 ## Using the GUI
 
-Running the GUI gives the opportunity to assign and manage trackers to modules created in Tecnomatix.
-
-### Main Window Interface
-
-On the main window, the list on the left side shows all modules created in Tecnomatix. This list includes _User Object Frames_ and _Single Procs_.
-
-The white label in the middle of the GUI displays the name of the selected module from the list.
-
-Above the label, the path to the currently loaded database file is shown.
-
-Underneath is a dropdown menu of all trackers available to be assigned to the selected module.
-
-The checkbox on the right side of the module label determines whether or not the specific module should be tracked in Tecnomatix.
-
-The Apply button assigns the current chosen tracker to the highlighted module along with changing the tracking status depending on the checkbox status.
+Running the GUI gives the opportunity to manage trackers and assign trackers to modules created in Tecnomatix.
 
 ### Menu Options
 
-The GUI interface has several top menu options as well.
+The GUI interface has several top menu options.
 
 **File**: With subtabs _Create Database_ and _Open Database_.
 
@@ -150,6 +148,20 @@ The GUI interface has several top menu options as well.
 **Help**: Opens the help page on Github.
 
 **About**: Opens the About page on Github.
+
+### Main Window Interface
+
+On the main window, the list on the left side shows all modules created in Tecnomatix. This list includes _User Object Frames_ and _Single Procs_.
+
+The white label in the middle of the GUI displays the name of the selected module from the list.
+
+Above the label, the path to the currently loaded database file is shown.
+
+Underneath is a dropdown menu of all trackers available to be assigned to the selected module.
+
+The checkbox on the right side of the module label determines whether or not the specific module should be tracked in Tecnomatix.
+
+The Apply button assigns the current chosen tracker to the highlighted module along with changing the tracking status depending on the checkbox status.
 
 ### Manage Trackers Window
 
