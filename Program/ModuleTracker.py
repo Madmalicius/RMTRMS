@@ -2,11 +2,13 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
 import threading
 from threading import Thread
 from time import sleep
 import configparser
 import triad_openvr
+from openvr import OpenVRError
 from RMTRMS import Database, Tracker
 import os
 import webbrowser
@@ -129,7 +131,6 @@ def manage_trackers(db):
     trackerListLabel = tk.Label(trackerWindow, text="Trackers")
     trackerListLabel.grid(sticky=S)
 
-
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
@@ -232,9 +233,16 @@ def testTread(databasePath, vr):
 
 
 if __name__ == "__main__":
-    vr = triad_openvr.triad_openvr()
-    vr.print_discovered_objects()
-
+    try:
+        vr = triad_openvr.triad_openvr()
+        vr.print_discovered_objects()
+    except OpenVRError as e:
+        print(e)
+        print("\r\n Error: Please install SteamVR")
+        tk.messagebox.showerror(
+            "SteamVR Error", "SteamVR not found. Please install SteamVR"
+        )
+        exit()
     config = configparser.ConfigParser()
     try:
         config.read("config")
@@ -287,8 +295,18 @@ if __name__ == "__main__":
     vrMenu.add_command(label="Restore", command=restore)
 
     # Add help & About buttons
-    menu.add_command(label="Help", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/blob/master/README.md"))
-    menu.add_command(label="About", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/graphs/contributors"))
+    menu.add_command(
+        label="Help",
+        command=lambda: webbrowser.open_new_tab(
+            "https://github.com/Madmalicius/RMTRMS/blob/master/README.md"
+        ),
+    )
+    menu.add_command(
+        label="About",
+        command=lambda: webbrowser.open_new_tab(
+            "https://github.com/Madmalicius/RMTRMS/graphs/contributors"
+        ),
+    )
 
     # Show path to active database
     databasePathWidget = tk.Label(root, textvariable=databasePathVar)
@@ -296,7 +314,7 @@ if __name__ == "__main__":
 
     # Module list label
     moduleListLabel = tk.Label(root, text="Modules", bg="#B0C4DE", font=10)
-    moduleListLabel.grid(row=1, sticky=W+S, padx=20)
+    moduleListLabel.grid(row=1, sticky=W + S, padx=20)
 
     # List of known modules
     moduleList = tk.Listbox(root)
