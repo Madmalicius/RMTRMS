@@ -6,7 +6,7 @@ Realtime Module Tracking for Reconfigurable Manufacturing Systems.
 
 - [Setting up the system](#Setting-up-the-system)
   - [Software Requirements](#Software-Requirements)
-  - [Settign Up Environment](#Setting-Up-Environment)
+  - [Setting Up Environment](#Setting-Up-Environment)
   - [Setting up SteamVR to run HMD-less](#Setting-up-SteamVR-to-run-HMD-less)
   - [Setting up Siemens Tecnomatix](#Setting-up-Siemens-Tecnomatix)
 - [Using the GUI](#Using-the-GUI)
@@ -39,7 +39,7 @@ Python should be downloaded and installed from their [website](https://www.pytho
 For CMD, the path to Python might need to be added manually. A guide can be found [here](https://edu.google.com/openonline/course-builder/docs/1.10/set-up-course-builder/check-for-python.html).
 
 Once python is installed, use Pip to install pipenv in either CMD, Git Bash or PowerShell:\
-`python -m pip pipenv sync`
+`python -m pip install pipenv`
 
 In CMD, Git Bash or PowerShell, cd into your work directory and clone this repository using Git:\
 `git clone https://github.com/madmalicius/RMTRMS.git`
@@ -48,7 +48,7 @@ Navigate to the repository and to the Database folder:\
 `cd RMTRMS/Database`
 
 Install the necessary Python packages:\
-`python -m pipenv install`
+`python -m pipenv sync`
 
 Activate the virtual environment:\
 `python -m pipenv shell`
