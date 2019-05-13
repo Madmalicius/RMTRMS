@@ -81,6 +81,7 @@ class Database:
 
             activeTrackers = []
 
+            self.vr.update_device_list()
             for device in self.vr.devices:
                 if "tracker" not in device:
                     continue
