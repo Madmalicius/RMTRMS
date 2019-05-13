@@ -110,6 +110,11 @@ def refresh_trackers(db):
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
+        if tracker.name == selectedTracker.get():
+            if tracker.active:
+                hltTrackerActive.set("active")
+            else:
+                hltTrackerActive.set("inactive")
     trackerNameArr.sort()
 
     trackerDropdown["menu"].delete(0, "end")
@@ -209,11 +214,16 @@ def updateModuleSelect(event, database):
 def trackerSelect(*args, db):
     # Check in DB where name is located
     hltTracker.set("No Tracker Assigned")
+    hltTrackerActive.set("No Tracker Assigned")
     refresh_trackers(db)
     print(selectedTracker.get())
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             hltTracker.set(tracker.serial)
+            if tracker.active:
+                hltTrackerActive.set("Active")
+            else:
+                hltTrackerActive.set("Inactive")
 
 
 def toggleTracking(database):
@@ -374,7 +384,7 @@ if __name__ == "__main__":
     trackerSerial.grid(row=4, column=1)
 
     # Tracker active
-    hltTrackerActive.set("No tracker chosen")
+    hltTrackerActive.set("No module chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
