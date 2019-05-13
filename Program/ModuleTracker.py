@@ -17,8 +17,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/SteamVR")
 import createDatabase
-from configure import configure
-from restore import restore
+from configure import configure, SteamVRRunningError as configureError
+from restore import restore, SteamVRRunningError as restoreError
 
 
 root = tk.Tk()
@@ -239,6 +239,21 @@ def testTread(databasePath, vr):
     while threading.main_thread().isAlive():
         update_trackers(trackerList)
 
+def configureSteamVR():
+    try:
+        configure()
+    except configureError:
+        tk.messagebox.showerror(
+            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+        )
+
+def restoreSteamVR():
+    try:
+        restore()
+    except restoreError:
+        tk.messagebox.showerror(
+            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+        )
 
 if __name__ == "__main__":
     try:
@@ -299,8 +314,8 @@ if __name__ == "__main__":
     )
 
     # Add subtabs to vrMenu
-    vrMenu.add_command(label="Configure", command=configure)
-    vrMenu.add_command(label="Restore", command=restore)
+    vrMenu.add_command(label="Configure", command=configureSteamVR)
+    vrMenu.add_command(label="Restore", command=restoreSteamVR)
 
     # Add help & About buttons
     menu.add_command(

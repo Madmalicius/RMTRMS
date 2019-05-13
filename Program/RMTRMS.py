@@ -36,6 +36,7 @@ class Tracker:
 
     def rename(self, name):
         self.db.set_tracker_name(self, name)
+        self.name = name
 
 
 class Database:
