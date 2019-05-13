@@ -1,0 +1,23 @@
+{
+   "dashboard" : {
+      "enableDashboard" : false
+   },
+   "driver_null" : {
+		"enable" : true,
+		"serialNumber" : "Null Serial Number", 
+		"modelNumber" : "Null Model Number",
+		"windowX" : 0,
+		"windowY" : 0,
+		"windowWidth" : 100,
+		"windowHeight" : 100,
+		"renderWidth" : 100,
+		"renderHeight" : 100,
+		"secondsFromVsyncToPhotons" : 0.01111111,
+		"displayFrequency" : 90.0
+	},
+   "steamvr" : {
+      "activateMultipleDrivers" : true,
+      "forcedDriver" : "null",
+      "requireHmd" : false
+   }
+}
