@@ -34,7 +34,6 @@ steamVRBakPath = "C:\Program Files (x86)\Steam\config\steamvr.vrsettings.bak"
 def configure():
 
     if b"vrmonitor.exe" in processes:
-        print("Cannot modify files while SteamVR is running.")
         raise SteamVRRunningError
 
     try:
