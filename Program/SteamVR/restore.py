@@ -10,6 +10,13 @@ import os
 import shutil
 import subprocess
 
+
+class SteamVRRunningError(Exception):
+    """ Raised when SteamVR is running while trying to modify conifg files"""
+
+    pass
+
+
 processes = subprocess.Popen(
     "tasklist", stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE
 ).communicate()[
@@ -22,8 +29,7 @@ steamVRBakPath = "C:\Program Files (x86)\Steam\config\steamvr.vrsettings.bak"
 
 def restore():
     if b"vrmonitor.exe" in processes:
-        print("Cannot modify files while SteamVR is running.")
-        return 1
+        raise SteamVRRunningError
 
     try:
         shutil.copyfile(steamVRBakPath, steamVRPath)
