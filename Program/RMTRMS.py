@@ -141,11 +141,14 @@ class Database:
             return None
 
     def get_assigned_tracker(self, module):
-        """Returns the tracker assigned to a module. Returns None is 
+        """Returns the tracker assigned to a module. 
 
 
         Arguments:
             module {String} -- The module whose tracker will be returned.
+        
+        Returns:
+            tracker {Tracker} -- Tracker that is assigned to the module.
         """
 
         try:
