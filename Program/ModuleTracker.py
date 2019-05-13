@@ -203,9 +203,10 @@ def updateModuleSelect(event, database):
 
 def trackerSelect(*args):
     # Check in DB where name is located
-    hltTracker.set("this is " + selectedTracker.get())
-    print(selectedTracker.get())
-    """TODO: Assign selected tracker to highlighted module"""
+    hltTracker.set("No Tracker Assigned")
+    for tracker in trackerArr:
+        if tracker.name == selectedTracker.get():
+            hltTracker.set(tracker.serial)
 
 
 def toggleTracking(database):
@@ -341,7 +342,7 @@ if __name__ == "__main__":
     trackerDropdown.grid(row=3, column=1)
 
     # Tracker serial label
-    hltTracker.set("No tracker chosen")
+    hltTracker.set("No module chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
     trackerSerial.grid(row=4, column=1)
 
