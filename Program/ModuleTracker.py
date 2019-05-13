@@ -239,21 +239,26 @@ def testTread(databasePath, vr):
     while threading.main_thread().isAlive():
         update_trackers(trackerList)
 
+
 def configureSteamVR():
     try:
         configure()
     except configureError:
         tk.messagebox.showerror(
-            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
         )
+
 
 def restoreSteamVR():
     try:
         restore()
     except restoreError:
         tk.messagebox.showerror(
-            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
         )
+
 
 if __name__ == "__main__":
     try:
@@ -262,10 +267,10 @@ if __name__ == "__main__":
     except OpenVRError as e:
         print(e)
         print("\r\n Error: Please install SteamVR")
-        tk.messagebox.showerror(
+        if tk.messagebox.showerror(
             "SteamVR Error", "SteamVR not found. Please install SteamVR"
-        )
-        exit()
+        ):
+            exit()
     config = configparser.ConfigParser()
     try:
         config.read("config")
