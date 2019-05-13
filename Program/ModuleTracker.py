@@ -185,7 +185,12 @@ def rename(nameList, name):
         return None
     for tracker in trackerArr:
         if tracker.name == nameList.get(i[0]):
-            tracker.rename(str(name.get()))
+            print(tracker.name + " " + selectedTracker.get())
+            if tracker.name == selectedTracker.get():
+                tracker.rename(str(name.get()))
+                selectedTracker.set(name.get())
+            else:
+                tracker.rename(str(name.get()))
 
 
 def updateModuleSelect(event, database):
@@ -201,9 +206,11 @@ def updateModuleSelect(event, database):
         hltModule.set("")
 
 
-def trackerSelect(*args):
+def trackerSelect(*args, db):
     # Check in DB where name is located
     hltTracker.set("No Tracker Assigned")
+    refresh_trackers(db)
+    print(selectedTracker.get())
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             hltTracker.set(tracker.serial)
@@ -335,7 +342,7 @@ if __name__ == "__main__":
 
     # Tracker choice
     selectedTracker.set("Choose tracker")
-    selectedTracker.trace("w", trackerSelect)
+    selectedTracker.trace("w", lambda *args: trackerSelect(*args, db=database))
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
