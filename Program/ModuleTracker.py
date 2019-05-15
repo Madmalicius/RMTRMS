@@ -175,7 +175,7 @@ def update_tracker_list(db, trackerList, name=None):
     i = trackerList.curselection()
 
     if name:
-        rename(trackerList, name)
+        rename(db, trackerList, name)
 
     refresh_trackers(db)
 
@@ -184,7 +184,7 @@ def update_tracker_list(db, trackerList, name=None):
         trackerList.insert(index, trackerName)
 
 
-def rename(nameList, name):
+def rename(db, nameList, name):
     i = nameList.curselection()
     if not i:
         return None
@@ -194,6 +194,7 @@ def rename(nameList, name):
             if tracker.name == selectedTracker.get():
                 tracker.rename(str(name.get()))
                 selectedTracker.set(name.get())
+                enableApplyButton(db)
             else:
                 tracker.rename(str(name.get()))
 
@@ -207,16 +208,17 @@ def updateModuleSelect(event, database):
             selectedTracker.set(assignedTracker.name)
         else:
             selectedTracker.set("Choose tracker")
+        enableApplyButton(database)
     else:
         hltModule.set("")
 
 
 def trackerSelect(*args, db):
     # Check in DB where name is located
+    enableApplyButton(db)
     hltTracker.set("No Tracker Assigned")
     hltTrackerActive.set("No Tracker Assigned")
     refresh_trackers(db)
-    print(selectedTracker.get())
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             hltTracker.set(tracker.serial)
@@ -241,6 +243,23 @@ def assignTrackerToModule(database):
 def saveChanges(database):
     toggleTracking(database)
     assignTrackerToModule(database)
+    applyButton.config(state=DISABLED)
+
+
+def enableApplyButton(db):
+    if hltModule.get():
+        if db.get_assigned_tracker(hltModule.get()):
+            if (
+                not db.get_assigned_tracker(hltModule.get()).name
+                == selectedTracker.get()
+                or not db.get_tracking_status(hltModule.get())
+                == checkButtonStatus.get()
+            ):
+                applyButton.config(state=NORMAL)
+            else:
+                applyButton.config(state=DISABLED)
+        elif not selectedTracker.get() == "Choose tracker":
+            applyButton.config(state=NORMAL)
 
 
 def testTread(databasePath, vr):
@@ -391,11 +410,18 @@ if __name__ == "__main__":
     trackerActive.grid(row=5, column=1, sticky=N)
 
     # Checkbox for using tracker on module
-    trackerCheckbox = tk.Checkbutton(root, text="Track module?", var=checkButtonStatus)
+    trackerCheckbox = tk.Checkbutton(
+        root,
+        text="Track module?",
+        var=checkButtonStatus,
+        command=lambda: enableApplyButton(database),
+    )
     trackerCheckbox.grid(row=1, rowspan=2, column=2, sticky=S)
 
     # Apply button
-    applyButton = tk.Button(root, text="Apply", command=lambda: saveChanges(database))
+    applyButton = tk.Button(
+        root, text="Apply", command=lambda: saveChanges(database), state=DISABLED
+    )
     applyButton.grid(row=5, column=2, sticky=N)
 
     # Create and run thread & GUI
