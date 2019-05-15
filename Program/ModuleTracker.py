@@ -241,8 +241,17 @@ def assignTrackerToModule(database):
 
 
 def saveChanges(database):
-    toggleTracking(database)
-    assignTrackerToModule(database)
+    if not database.get_tracking_status(hltModule.get()) == checkButtonStatus.get():
+        toggleTracking(database)
+
+    if database.get_assigned_tracker(hltModule.get()):
+        if (
+            not database.get_assigned_tracker(hltModule.get()).name
+            == selectedTracker.get()
+        ):
+            assignTrackerToModule(database)
+    else:
+        assignTrackerToModule(database)
     applyButton.config(state=DISABLED)
 
 
