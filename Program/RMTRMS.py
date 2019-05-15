@@ -14,7 +14,7 @@ class Tracker:
             if self.name == None:
                 self.db.set_default_tracker_name(self)
                 self.name = self.db.get_tracker_name(self)
-            
+
             self.active = True
             self.update_position()
             self.db.set_tracker_active_status(self, True)
@@ -268,7 +268,7 @@ class Database:
 
         try:
             self.curs.execute(
-                "UPDATE modules SET tracker=NULL WHERE tracker=:tracker",
+                "UPDATE modules SET tracker=NULL, tracked=0 WHERE tracker=:tracker",
                 {"tracker": tracker.serial},
             )
             self.curs.execute(sql, params)
