@@ -269,6 +269,8 @@ def enableApplyButton(db):
                 applyButton.config(state=DISABLED)
         elif not selectedTracker.get() == "Choose tracker":
             applyButton.config(state=NORMAL)
+        else:
+            applyButton.config(state=DISABLED)
 
 
 def testTread(databasePath, vr):
