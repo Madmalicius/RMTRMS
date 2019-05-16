@@ -203,6 +203,15 @@ class triad_openvr:
             openvr.TrackingUniverseStanding, 0, openvr.k_unMaxTrackedDeviceCount
         )
         # Iterate through the pose list to find the active devices and determine their type
+
+        self.object_names = {
+            "Tracking Reference": [],
+            "HMD": [],
+            "Controller": [],
+            "Tracker": [],
+        }
+        self.devices = {}
+        
         for i in range(openvr.k_unMaxTrackedDeviceCount):
             if poses[i].bPoseIsValid:
                 device_class = self.vr.getTrackedDeviceClass(i)

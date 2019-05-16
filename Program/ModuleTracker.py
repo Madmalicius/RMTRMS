@@ -110,6 +110,11 @@ def refresh_trackers(db):
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
+        if tracker.name == selectedTracker.get():
+            if tracker.active:
+                hltTrackerActive.set("active")
+            else:
+                hltTrackerActive.set("inactive")
     trackerNameArr.sort()
 
     trackerDropdown["menu"].delete(0, "end")
@@ -170,7 +175,7 @@ def update_tracker_list(db, trackerList, name=None):
     i = trackerList.curselection()
 
     if name:
-        rename(trackerList, name)
+        rename(db, trackerList, name)
 
     refresh_trackers(db)
 
@@ -179,13 +184,19 @@ def update_tracker_list(db, trackerList, name=None):
         trackerList.insert(index, trackerName)
 
 
-def rename(nameList, name):
+def rename(db, nameList, name):
     i = nameList.curselection()
     if not i:
         return None
     for tracker in trackerArr:
         if tracker.name == nameList.get(i[0]):
-            tracker.rename(str(name.get()))
+            print(tracker.name + " " + selectedTracker.get())
+            if tracker.name == selectedTracker.get():
+                tracker.rename(str(name.get()))
+                selectedTracker.set(name.get())
+                enableApplyButton(db)
+            else:
+                tracker.rename(str(name.get()))
 
 
 def updateModuleSelect(event, database):
@@ -197,16 +208,24 @@ def updateModuleSelect(event, database):
             selectedTracker.set(assignedTracker.name)
         else:
             selectedTracker.set("Choose tracker")
+        enableApplyButton(database)
     else:
         hltModule.set("")
 
 
-def trackerSelect(*args):
+def trackerSelect(*args, db):
     # Check in DB where name is located
+    enableApplyButton(db)
     hltTracker.set("No Tracker Assigned")
+    hltTrackerActive.set("No Tracker Assigned")
+    refresh_trackers(db)
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             hltTracker.set(tracker.serial)
+            if tracker.active:
+                hltTrackerActive.set("Active")
+            else:
+                hltTrackerActive.set("Inactive")
 
 
 def toggleTracking(database):
@@ -222,8 +241,36 @@ def assignTrackerToModule(database):
 
 
 def saveChanges(database):
-    toggleTracking(database)
-    assignTrackerToModule(database)
+    if not database.get_tracking_status(hltModule.get()) == checkButtonStatus.get():
+        toggleTracking(database)
+
+    if database.get_assigned_tracker(hltModule.get()):
+        if (
+            not database.get_assigned_tracker(hltModule.get()).name
+            == selectedTracker.get()
+        ):
+            assignTrackerToModule(database)
+    else:
+        assignTrackerToModule(database)
+    applyButton.config(state=DISABLED)
+
+
+def enableApplyButton(db):
+    if hltModule.get():
+        if db.get_assigned_tracker(hltModule.get()):
+            if (
+                not db.get_assigned_tracker(hltModule.get()).name
+                == selectedTracker.get()
+                or not db.get_tracking_status(hltModule.get())
+                == checkButtonStatus.get()
+            ):
+                applyButton.config(state=NORMAL)
+            else:
+                applyButton.config(state=DISABLED)
+        elif not selectedTracker.get() == "Choose tracker":
+            applyButton.config(state=NORMAL)
+        else:
+            applyButton.config(state=DISABLED)
 
 
 def testTread(databasePath, vr):
@@ -248,6 +295,26 @@ def restoreSteamVR():
             "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
         )
 
+def configureSteamVR():
+    try:
+        configure()
+    except configureError:
+        tk.messagebox.showerror(
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
+        )
+
+
+def restoreSteamVR():
+    try:
+        restore()
+    except restoreError:
+        tk.messagebox.showerror(
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
+        )
+
+
 if __name__ == "__main__":
     try:
         vr = triad_openvr.triad_openvr()
@@ -255,10 +322,10 @@ if __name__ == "__main__":
     except OpenVRError as e:
         print(e)
         print("\r\n Error: Please install SteamVR")
-        tk.messagebox.showerror(
+        if tk.messagebox.showerror(
             "SteamVR Error", "SteamVR not found. Please install SteamVR"
-        )
-        exit()
+        ):
+            exit()
     config = configparser.ConfigParser()
     try:
         config.read("config")
@@ -350,7 +417,7 @@ if __name__ == "__main__":
 
     # Tracker choice
     selectedTracker.set("Choose tracker")
-    selectedTracker.trace("w", trackerSelect)
+    selectedTracker.trace("w", lambda *args: trackerSelect(*args, db=database))
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
@@ -362,18 +429,25 @@ if __name__ == "__main__":
     trackerSerial.grid(row=4, column=1)
 
     # Tracker active
-    hltTrackerActive.set("No tracker chosen")
+    hltTrackerActive.set("No module chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
     trackerActive.grid(row=5, column=1, sticky=N)
 
     # Checkbox for using tracker on module
-    trackerCheckbox = tk.Checkbutton(root, text="Track module?", var=checkButtonStatus)
+    trackerCheckbox = tk.Checkbutton(
+        root,
+        text="Track module?",
+        var=checkButtonStatus,
+        command=lambda: enableApplyButton(database),
+    )
     trackerCheckbox.grid(row=1, rowspan=2, column=2, sticky=S)
 
     # Apply button
-    applyButton = tk.Button(root, text="Apply", command=lambda: saveChanges(database))
+    applyButton = tk.Button(
+        root, text="Apply", command=lambda: saveChanges(database), state=DISABLED
+    )
     applyButton.grid(row=5, column=2, sticky=N)
 
     # Create and run thread & GUI

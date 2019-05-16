@@ -6,25 +6,31 @@ class Tracker:
     def __init__(self, vr=None, db=None, trackerID=None, serial=None):
         self.db = db
         if vr:
-            self.active = True
             self.vr = vr
             self.trackerID = trackerID
             self.serial = self.vr.devices[self.trackerID].get_serial()
-            self.update_position()
-            self.db.update_tracker_position(self)
             self.name = db.get_tracker_name(self)
 
             if self.name == None:
                 self.db.set_default_tracker_name(self)
                 self.name = self.db.get_tracker_name(self)
+
+            self.active = True
+            self.update_position()
+            self.db.set_tracker_active_status(self, True)
         else:
-            self.active = False
             self.serial = serial
             self.name = self.db.get_tracker_name(self)
+            self.active = False
+            self.db.set_tracker_active_status(self, False)
 
     def update_position(self):
         if self.active is True:
             pose = self.vr.devices[self.trackerID].get_pose_euler()
+            if pose == [0, 0, 0, 0, 0, 0]:
+                self.active = False
+                return None
+
             self.x = pose[0]
             self.z = pose[1]
             self.y = pose[2]
@@ -81,6 +87,7 @@ class Database:
 
             activeTrackers = []
 
+            self.vr.update_device_list()
             for device in self.vr.devices:
                 if "tracker" not in device:
                     continue
@@ -261,7 +268,7 @@ class Database:
 
         try:
             self.curs.execute(
-                "UPDATE modules SET tracker=NULL WHERE tracker=:tracker",
+                "UPDATE modules SET tracker=NULL, tracked=0 WHERE tracker=:tracker",
                 {"tracker": tracker.serial},
             )
             self.curs.execute(sql, params)
