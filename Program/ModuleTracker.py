@@ -104,9 +104,11 @@ def open_database():
         config.write(f)
 
 
-def refresh_trackers(db):
+def refresh_trackers(db, triggerWarning=None):
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
+    if not trackerArr and triggerWarning:
+        tk.messagebox.showwarning("No trackers", "No trackers found in database. Use the refresh button scan for trackers")
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
@@ -345,9 +347,13 @@ if __name__ == "__main__":
     search_for_tracker(vr)
 
     trackerArr = database.get_tracker_list()
-    for tracker in trackerArr:
-        trackerNameArr.append(tracker.name)
-    trackerNameArr.sort()
+    if trackerArr:
+        for tracker in trackerArr:
+            trackerNameArr.append(tracker.name)
+        trackerNameArr.sort()
+    else:
+        trackerNameArr.append("No trackers found")
+        tk.messagebox.showwarning("No trackers", "No trackers found in database. Use the refresh button scan for trackers")
 
     menu = tk.Menu(root)
 
@@ -368,7 +374,7 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=lambda: open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database))
+    trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database, 1))
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
     )
@@ -416,12 +422,13 @@ if __name__ == "__main__":
     moduleName.grid(row=1, rowspan=2, column=1, sticky=E + W + S)
 
     # Tracker choice
-    selectedTracker.set("Choose tracker")
+    selectedTracker.set("No module chosen")
     selectedTracker.trace("w", lambda *args: trackerSelect(*args, db=database))
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
     trackerDropdown.grid(row=3, column=1)
+    trackerDropdown["menu"].delete(0, "end")
 
     # Tracker serial label
     hltTracker.set("No module chosen")
