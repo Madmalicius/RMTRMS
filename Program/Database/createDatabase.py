@@ -49,14 +49,10 @@ def create_database(path="Modules.db"):
     sql = """
     CREATE TABLE IF NOT EXISTS positionOut (
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    serial TEXT UNIQUE NOT NULL,
+    module TEXT UNIQUE NOT NULL,
     positionX FLOAT NOT NULL,
     positionY FLOAT NOT NULL,
-    positionZ FLOAT NOT NULL,
-    yaw FLOAT NOT NULL,
-    pitch FLOAT NOT NULL,
-    roll FLOAT NOT NULL
+    yaw FLOAT NOT NULL
     );
     """
     try:
