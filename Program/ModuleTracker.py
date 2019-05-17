@@ -42,6 +42,11 @@ checkButtonStatus = IntVar()
 
 
 def search_for_tracker(vr):
+    """Scans for active trackers.
+    
+    Arguments:
+        vr {triad_openvr} -- vr object.
+    """
     trackerCount, searchCount = 0, 0
     while trackerCount is 0 and searchCount < 5000:
         print("\rSearching for trackers", end="")
@@ -56,12 +61,18 @@ def search_for_tracker(vr):
 
 
 def update_trackers(trackers):
+    """Updates the position of active trackers and saves it to the database.
+
+    arguments:
+        trackers {array} -- Array of trackers from the database.
+    """
     for tracker in trackers:
         tracker.update_position()
     sleep(0.001)
 
 
 def new_database():
+    """Creates a new database file."""
     global databasePath, databasePathVar
     config = configparser.ConfigParser()
     path = filedialog.asksaveasfilename(
@@ -86,6 +97,7 @@ def new_database():
 
 
 def open_database():
+    """Opens a database file."""
     global databasePath, databasePathVar
     config = configparser.ConfigParser()
     path = filedialog.askopenfilename(
@@ -106,6 +118,12 @@ def open_database():
 
 
 def refresh_trackers(db, triggerWarning=None):
+    """reloads all known trackers from the database.
+    
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+        triggerWarning {bool} -- If a warning window should open if no trackers are found in the database. Can be ignored.
+    """
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
     if not trackerArr and triggerWarning:
@@ -131,6 +149,11 @@ def refresh_trackers(db, triggerWarning=None):
 
 
 def manage_trackers(db):
+    """Creates a new window for tracker management.
+    
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+    """
     i = None
 
     # Create window
@@ -170,6 +193,12 @@ def manage_trackers(db):
 
 
 def removeTracker(db, trackerList):
+    """Removes tracker from database.
+    
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+        trackerList {Listbox} -- List of tracker names.
+    """
     if trackerList.curselection():
         for tracker in trackerArr:
             if tracker.name == trackerList.get(trackerList.curselection()):
@@ -178,6 +207,13 @@ def removeTracker(db, trackerList):
 
 
 def update_tracker_list(db, trackerList, name=None):
+    """Refreshes the list of trackers.
+    
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+        trackerList {Listbox} -- list of tracker names.
+        name {string} -- New desired name for highlighted tracker. Can be ignored.
+    """
     i = trackerList.curselection()
 
     if name:
@@ -191,6 +227,13 @@ def update_tracker_list(db, trackerList, name=None):
 
 
 def rename(db, nameList, name):
+    """Renames the highlighted tracker.
+    
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+        nameList {Listbox} -- List of tracker names.
+        name {string} -- New desired name.
+    """
     i = nameList.curselection()
     if not i:
         return None
@@ -206,6 +249,12 @@ def rename(db, nameList, name):
 
 
 def updateModuleSelect(event, database):
+    """Saves current changes to the database.
+    
+    Arguments:
+        event {event} -- Event handler.
+        database {Database} -- The object linked to the current database connection.
+    """
     if moduleList.curselection():
         hltModule.set(moduleList.get(moduleList.curselection()))
         checkButtonStatus.set(database.get_tracking_status(hltModule.get()))
@@ -220,6 +269,12 @@ def updateModuleSelect(event, database):
 
 
 def trackerSelect(*args, db):
+    """Shows serial and status of the selected tracker.
+    
+    Arguments:
+        *args {args} -- Required argument list for stringVar tracing.
+        db {Database} -- The object linked to the current database connection.
+    """
     # Check in DB where name is located
     enableApplyButton(db)
     hltTracker.set("No Tracker Assigned")
@@ -235,18 +290,33 @@ def trackerSelect(*args, db):
 
 
 def toggleTracking(database):
+    """Saves the chosen tracking status of the highlighted module.
+    
+    Arguments:
+        database {Database} -- The object linked to the current database connection.
+    """
     print("activated")
     print(checkButtonStatus.get())
     database.set_module_tracking_status(hltModule.get(), checkButtonStatus.get())
 
 
 def assignTrackerToModule(database):
+    """Assigns the chosen tracker to the highlighted module.
+    
+    Arguments:
+        database {Database} -- The object linked to the current database connection.
+    """
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             database.assign_tracker(hltModule.get(), tracker)
 
 
 def saveChanges(database):
+    """Saves current changes to the database.
+    
+    Arguments:
+        database {Database} -- The object linked to the current database connection.
+    """
     if not database.get_tracking_status(hltModule.get()) == checkButtonStatus.get():
         toggleTracking(database)
 
@@ -262,6 +332,11 @@ def saveChanges(database):
 
 
 def enableApplyButton(db):
+    """Checks if the apply button should be enabled.
+
+    Arguments:
+        db {Database} -- The object linked to the current database connection.
+    """
     if hltModule.get():
         if db.get_assigned_tracker(hltModule.get()):
             if (
@@ -279,7 +354,13 @@ def enableApplyButton(db):
             applyButton.config(state=DISABLED)
 
 
-def testTread(databasePath, vr):
+def trackerPositionThread(databasePath, vr):
+    """Thread function: Creates new link to the database and tracker list.
+
+    Arguments:
+        databasePath {string} -- Path to the designated database file.
+        vr {triad_openvr} -- vr object.
+    """
     database = Database(databasePath, vr)
     trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
@@ -287,7 +368,7 @@ def testTread(databasePath, vr):
 
 
 def configureSteamVR():
-    """Configures the SteamVR settings to run in headless mode"""
+    """Configures the SteamVR settings to run in headless mode."""
     try:
         configure()
     except configureError:
@@ -298,7 +379,7 @@ def configureSteamVR():
 
 
 def restoreSteamVR():
-    """Restores the setting in SteamVR to default"""
+    """Restores the setting in SteamVR to default."""
     try:
         restore()
     except restoreError:
@@ -460,8 +541,10 @@ if __name__ == "__main__":
     applyButton.grid(row=5, column=3, sticky=N)
 
     # Create and run thread & GUI
-    test = Thread(target=testTread, args=[databasePath, vr], daemon=False)
-    test.start()
+    trackerPosition = Thread(
+        target=trackerPositionThread, args=[databasePath, vr], daemon=False
+    )
+    trackerPosition.start()
 
     root.mainloop()
 
