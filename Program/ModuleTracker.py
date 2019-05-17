@@ -287,6 +287,7 @@ def testTread(databasePath, vr):
 
 
 def configureSteamVR():
+    """Configures the SteamVR settings to run in headless mode"""
     try:
         configure()
     except configureError:
@@ -297,26 +298,7 @@ def configureSteamVR():
 
 
 def restoreSteamVR():
-    try:
-        restore()
-    except restoreError:
-        tk.messagebox.showerror(
-            "SteamVRRunningError",
-            "Cannot modify files while SteamVR is running. Please close the program and try again.",
-        )
-
-
-def configureSteamVR():
-    try:
-        configure()
-    except configureError:
-        tk.messagebox.showerror(
-            "SteamVRRunningError",
-            "Cannot modify files while SteamVR is running. Please close the program and try again.",
-        )
-
-
-def restoreSteamVR():
+    """Restores the setting in SteamVR to default"""
     try:
         restore()
     except restoreError:
