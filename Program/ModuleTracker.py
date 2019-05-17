@@ -20,11 +20,12 @@ import createDatabase
 from configure import configure, SteamVRRunningError as configureError
 from restore import restore, SteamVRRunningError as restoreError
 
+bgColor = "#B0C4DE"
 
 root = tk.Tk()
 
 root.title("Module Manager")
-root.config(bg="#B0C4DE")
+root.config(bg=bgColor)
 
 databasePathVar = tk.StringVar()
 databasePath = ""
@@ -108,7 +109,10 @@ def refresh_trackers(db, triggerWarning=None):
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
     if not trackerArr and triggerWarning:
-        tk.messagebox.showwarning("No trackers", "No trackers found in database. Use the refresh button scan for trackers")
+        tk.messagebox.showwarning(
+            "No trackers",
+            "No trackers found in database. Use the refresh button scan for trackers",
+        )
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
@@ -281,21 +285,26 @@ def testTread(databasePath, vr):
     while threading.main_thread().isAlive():
         update_trackers(trackerList)
 
+
 def configureSteamVR():
     try:
         configure()
     except configureError:
         tk.messagebox.showerror(
-            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
         )
+
 
 def restoreSteamVR():
     try:
         restore()
     except restoreError:
         tk.messagebox.showerror(
-            "SteamVRRunningError", "Cannot modify files while SteamVR is running. Please close the program and try again."
+            "SteamVRRunningError",
+            "Cannot modify files while SteamVR is running. Please close the program and try again.",
         )
+
 
 def configureSteamVR():
     try:
@@ -353,7 +362,10 @@ if __name__ == "__main__":
         trackerNameArr.sort()
     else:
         trackerNameArr.append("No trackers found")
-        tk.messagebox.showwarning("No trackers", "No trackers found in database. Use the refresh button scan for trackers")
+        tk.messagebox.showwarning(
+            "No trackers",
+            "No trackers found in database. Use the refresh button scan for trackers",
+        )
 
     menu = tk.Menu(root)
 
@@ -374,7 +386,9 @@ if __name__ == "__main__":
     fileMenu.add_command(label="Open database", command=lambda: open_database)
 
     # Add subtabs to Trackers
-    trackerMenu.add_command(label="Refresh", command=lambda: refresh_trackers(database, 1))
+    trackerMenu.add_command(
+        label="Refresh", command=lambda: refresh_trackers(database, 1)
+    )
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
     )
@@ -419,7 +433,7 @@ if __name__ == "__main__":
     moduleName = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
-    moduleName.grid(row=1, rowspan=2, column=1, sticky=E + W + S)
+    moduleName.grid(row=1, rowspan=2, column=1, columnspan=2, sticky=E + W + S)
 
     # Tracker choice
     selectedTracker.set("No module chosen")
@@ -427,20 +441,26 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=3, column=1)
+    trackerDropdown.grid(row=3, column=1, columnspan=2)
     trackerDropdown["menu"].delete(0, "end")
 
     # Tracker serial label
     hltTracker.set("No module chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=4, column=1)
+    trackerSerial.grid(row=4, column=2, sticky=W)
+
+    trackerSerialLabel = tk.Label(root, text="Serial:", bg=bgColor)
+    trackerSerialLabel.grid(row=4, column=1, sticky=E)
 
     # Tracker active
     hltTrackerActive.set("No module chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
-    trackerActive.grid(row=5, column=1, sticky=N)
+    trackerActive.grid(row=5, column=2, sticky=N + W)
+
+    trackerActiveLabel = tk.Label(root, text="Status:", bg=bgColor)
+    trackerActiveLabel.grid(row=5, column=1, sticky=N + E)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
@@ -449,13 +469,13 @@ if __name__ == "__main__":
         var=checkButtonStatus,
         command=lambda: enableApplyButton(database),
     )
-    trackerCheckbox.grid(row=1, rowspan=2, column=2, sticky=S)
+    trackerCheckbox.grid(row=1, rowspan=2, column=3, sticky=S)
 
     # Apply button
     applyButton = tk.Button(
         root, text="Apply", command=lambda: saveChanges(database), state=DISABLED
     )
-    applyButton.grid(row=5, column=2, sticky=N)
+    applyButton.grid(row=5, column=3, sticky=N)
 
     # Create and run thread & GUI
     test = Thread(target=testTread, args=[databasePath, vr], daemon=False)
