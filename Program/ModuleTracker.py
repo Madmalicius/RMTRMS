@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-import multiprocessing as mp
 import threading
+from threading import Thread
 from time import sleep
 import configparser
 import triad_openvr
@@ -136,9 +136,9 @@ def refresh_trackers(db, triggerWarning=False):
         trackerNameArr.append(tracker.name)
         if tracker.name == selectedTracker.get():
             if tracker.active:
-                hltTrackerActive.set("Active")
+                hltTrackerActive.set("active")
             else:
-                hltTrackerActive.set("Inactive")
+                hltTrackerActive.set("inactive")
     trackerNameArr.sort()
 
     trackerDropdown["menu"].delete(0, "end")
@@ -354,14 +354,13 @@ def enableApplyButton(db):
             applyButton.config(state=DISABLED)
 
 
-def trackerPositionThread(databasePath):
+def trackerPositionThread(databasePath, vr):
     """Thread function: Creates new link to the database and tracker list.
 
     Arguments:
         databasePath {string} -- Path to the designated database file.
         vr {triad_openvr} -- vr object.
     """
-    vr = triad_openvr.triad_openvr()
     database = Database(databasePath, vr)
     trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
@@ -542,14 +541,11 @@ if __name__ == "__main__":
     applyButton.grid(row=5, column=3, sticky=N)
 
     # Create and run thread & GUI
-    mp.set_start_method("spawn")
-    trackerPosition = mp.Process(
-        target=trackerPositionThread, args=(databasePath,)
+    trackerPosition = Thread(
+        target=trackerPositionThread, args=[databasePath, vr], daemon=False
     )
     trackerPosition.start()
 
     root.mainloop()
-
-    trackerPosition.terminate()
 
     database.db.close()
