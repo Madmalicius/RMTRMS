@@ -64,6 +64,7 @@ class Database:
         except sqliteError as e:
             print(e)
         self.curs = self.db.cursor()
+        self.curs.execute("PRAGMA main.synchronous=NORMAL")
 
         if vr is not None:
             self.vr = vr
