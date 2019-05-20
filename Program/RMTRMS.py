@@ -26,7 +26,12 @@ class Tracker:
 
     def update_position(self):
         if self.active is True:
-            pose = self.vr.devices[self.trackerID].get_pose_euler()
+            try:
+                pose = self.vr.devices[self.trackerID].get_pose_euler()
+            except KeyError:
+                self.active = False
+                return None
+
             if pose == [0, 0, 0, 0, 0, 0]:
                 self.active = False
                 return None
@@ -39,6 +44,12 @@ class Tracker:
             self.roll = pose[5]
 
             self.db.update_tracker_position(self)
+        else:
+            try:
+                pose = self.vr.devices[self.trackerID].get_pose_euler()
+                self.active = True
+            except KeyError:
+                pass
 
     def rename(self, name):
         self.db.set_tracker_name(self, name)
