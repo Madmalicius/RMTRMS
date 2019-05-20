@@ -39,6 +39,7 @@ trackerArr = []
 trackerNameArr = []
 
 checkButtonStatus = IntVar()
+updateThreadListFlag = False
 
 
 def search_for_tracker(vr):
@@ -126,19 +127,22 @@ def refresh_trackers(db, triggerWarning=False):
     """
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
-    if not trackerArr and triggerWarning:
-        tk.messagebox.showwarning(
-            "No trackers",
-            "No trackers found in database. Use the refresh button scan for trackers",
-        )
+    if triggerWarning:
+        if trackerArr:
+            updateThreadListFlag = True
+        else:
+            tk.messagebox.showwarning(
+                "No trackers",
+                "No trackers found in database. Use the refresh button scan for trackers",
+            )
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
         if tracker.name == selectedTracker.get():
             if tracker.active:
-                hltTrackerActive.set("active")
+                hltTrackerActive.set("Active")
             else:
-                hltTrackerActive.set("inactive")
+                hltTrackerActive.set("Inactive")
     trackerNameArr.sort()
 
     trackerDropdown["menu"].delete(0, "end")
@@ -361,9 +365,13 @@ def trackerPositionThread(databasePath, vr):
         databasePath {string} -- Path to the designated database file.
         vr {triad_openvr} -- vr object.
     """
+    global updateThreadListFlag
     database = Database(databasePath, vr)
     trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
+        if updateThreadListFlag:
+            trackerList = database.get_tracker_list()
+            updateThreadListFlag = False
         update_trackers(trackerList)
 
 
