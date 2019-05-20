@@ -39,8 +39,8 @@ class Tracker:
             self.x = pose[0]
             self.z = pose[1]
             self.y = pose[2]
-            self.yaw = pose[3]
-            self.pitch = pose[4]
+            self.pitch = pose[3]
+            self.yaw = pose[4]
             self.roll = pose[5]
 
             self.db.update_tracker_position(self)
