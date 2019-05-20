@@ -117,12 +117,12 @@ def open_database():
         config.write(f)
 
 
-def refresh_trackers(db, triggerWarning=None):
+def refresh_trackers(db, triggerWarning=False):
     """reloads all known trackers from the database.
     
     Arguments:
         db {Database} -- The object linked to the current database connection.
-        triggerWarning {bool} -- If a warning window should open if no trackers are found in the database. Can be ignored.
+        triggerWarning {bool} -- If a warning window should open if no trackers are found in the database. Optional, default is no warning.
     """
     global trackerArr, trackerNameArr
     trackerArr = db.get_tracker_list()
@@ -212,7 +212,7 @@ def update_tracker_list(db, trackerList, name=None):
     Arguments:
         db {Database} -- The object linked to the current database connection.
         trackerList {Listbox} -- list of tracker names.
-        name {string} -- New desired name for highlighted tracker. Can be ignored.
+        name {string} -- New desired name for highlighted tracker. Optional, default is no name.
     """
     i = trackerList.curselection()
 
@@ -451,7 +451,7 @@ if __name__ == "__main__":
 
     # Add subtabs to Trackers
     trackerMenu.add_command(
-        label="Refresh", command=lambda: refresh_trackers(database, 1)
+        label="Refresh", command=lambda: refresh_trackers(database, True)
     )
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
