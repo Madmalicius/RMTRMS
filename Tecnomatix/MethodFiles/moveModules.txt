@@ -1,4 +1,4 @@
-var moduleName:string;
+var moduleName,sql:string;
 var module:object;
 var x,y,yaw:real;
 var row:integer;
@@ -18,11 +18,10 @@ for var i := 1 to .Models.Frame.modules.ydim;
 			row := .Models.Frame.trackerPosition.cursorY;
 			x := str_to_num(.Models.Frame.trackerPosition[5, row]);
 			y := -str_to_num(.Models.Frame.trackerPosition[6, row]);  --flipped y-coordinate to match testing room
-			yaw := str_to_num(.Models.Frame.trackerPosition[9, row]);
+			yaw := str_to_num(.Models.Frame.trackerPosition[8, row]);
 			
 			module._3D.Position := makeArray(x, y, 0);
 			module._3D.Rotation := makeArray(yaw, 0, 0, -1);
 		end;
 	end;
-	
 next

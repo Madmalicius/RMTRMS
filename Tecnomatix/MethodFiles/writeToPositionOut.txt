@@ -1,0 +1,28 @@
+var moduleName,sql:string;
+var module:object;
+var x,y,yaw:real;
+var row:integer;
+
+if not .Models.Frame.PositionDB.isOpen then
+	.Models.Frame.PositionDB.open()
+	.Models.Frame.PositionDB.loadFromFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db");
+end;
+
+for var i := 1 to .Models.Frame.modules.ydim;
+	moduleName := .Models.Frame.modules[2,i];
+	module := moduleName;
+	
+	x := module._3D.Position[1];
+	y := module._3D.Position[2];
+	yaw := module._3D.Rotation[1];
+	sql := "INSERT or IGNORE INTO positionOut (module, positionX, positionY, yaw) VALUES (\"" + moduleName + "\", " + num_to_str(x) + ", " + num_to_str(y) + ", " + num_to_str(yaw) + ")";
+	.Models.Frame.PositionDB.exec(sql);
+	sql := "UPDATE or IGNORE positionOut SET positionX="+num_to_str(x)+", positionY="+num_to_str(y)+", yaw="+num_to_str(yaw)+" WHERE module=\"" + moduleName + "\"";
+	.Models.Frame.PositionDB.exec(sql);
+next;
+
+.Models.Frame.PositionDB.saveToFile("C:\Users\Madmal\Documents\Uni\6th Semester\Bachelor\RMTRMS\Modules.db");
+
+if not .Models.Frame.EventController.IsRunning then
+	.Models.Frame.PositionDB.close
+end;
