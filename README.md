@@ -83,8 +83,12 @@ To setup the Tecnomatix simulation, create a new 2D model with the following com
 
 Material Flow
 - Source        : Source
-- SingleProc    : SingleProc
+- SingleProc    : SingleProc (Is also counted as a module)
 - Drain         : Drain
+(Add in more SingleProcs as modules if needed)
+
+User Interface
+- Button [ok]   : sendPositions
 
 Information Flow
 - TableFile     : modules
@@ -99,10 +103,11 @@ Information Flow
 - Method        : moveModules
 - Method        : updatePosition
 - Method        : updateModules
+- Method        : writeToPositionOut
 
 User Objects
 - Frame         : <Module Name>
-(Add in more frames if needed)
+(Add in more frames as modules if needed)
 
 ```
 
@@ -114,7 +119,9 @@ Right-click component and click _Rename_ to name the component.
 
 Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. Double-click `Drain` and under _Controls>Entrance_ select `moveModules`.
 
-In methods `dbOpen`, `dbClose` and `moveModules` change the path of commands where instructed.
+right-click `sendPositions` and click open to enter settings for the button. Label is the text displayed on the button, which is recommended to set to _Send_. Under _Attributes>Control_ choose _Select Object>writeToPositionOut_.
+
+In methods `dbOpen`, `dbClose`, `moveModules` and `writeToPositionOut`, change the path of commands where instructed.
 
 Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`
 
