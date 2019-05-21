@@ -9,14 +9,14 @@ class Tracker:
             self.vr = vr
             self.trackerID = trackerID
             self.serial = self.vr.devices[self.trackerID].get_serial()
+            self.active = True
+            self.update_position()
             self.name = db.get_tracker_name(self)
 
             if self.name == None:
                 self.db.set_default_tracker_name(self)
                 self.name = self.db.get_tracker_name(self)
 
-            self.active = True
-            self.update_position()
             self.db.set_tracker_active_status(self, True)
         else:
             self.serial = serial
