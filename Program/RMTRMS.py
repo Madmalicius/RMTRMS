@@ -28,6 +28,9 @@ class Tracker:
         if self.active is True:
             try:
                 pose = self.vr.devices[self.trackerID].get_pose_euler()
+            except AttributeError:
+                self.active = False
+                return None
             except KeyError:
                 self.active = False
                 return None
@@ -49,6 +52,8 @@ class Tracker:
                 pose = self.vr.devices[self.trackerID].get_pose_euler()
                 self.active = True
             except AttributeError:
+                pass
+            except KeyError:
                 pass
 
     def rename(self, name):
