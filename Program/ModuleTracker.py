@@ -20,7 +20,7 @@ import createDatabase
 from configure import configure, SteamVRRunningError as configureError
 from restore import restore, SteamVRRunningError as restoreError
 
-bgColor = "#B0C4DE"
+bgColor = "#C5CAE9"
 
 root = tk.Tk()
 
@@ -52,11 +52,12 @@ class DatabaseDialog:
 
         self.top.title("Database Error")
         self.top.grab_set()
+        self.top.attributes('-topmost', 'true')
 
-        Label(self.top, text="No database found. \nPlease create new or open an existing database.").grid(columnspan=2)
+        Label(self.top, text="No database found. \nPlease create a new,\n or open an existing database.").grid(columnspan=2, padx=20, pady=10)
 
-        createButton = Button(self.top, text="Create", command=self.createNew).grid(row=1)
-        openButton = Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1)
+        createButton = Button(self.top, text="Create", command=self.createNew).grid(row=1, padx=20, pady=10, sticky=E)
+        openButton = Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1, padx=20, pady=10, sticky=W)
     
     def createNew(self):
         new_database()
@@ -559,15 +560,15 @@ if __name__ == "__main__":
     databasePathWidget.grid(columnspan=4, sticky=E + W)
 
     # Module list label
-    moduleListLabel = tk.Label(root, text="Modules", bg="#B0C4DE", font=10)
-    moduleListLabel.grid(row=1, sticky=W + S, padx=20)
+    moduleListLabel = tk.Label(root, text="Modules", bg=bgColor, font=10)
+    moduleListLabel.grid(row=1, sticky=W + S, padx=30)
 
     # List of known modules
     moduleList = tk.Listbox(root)
     moduleList.bind(
         "<ButtonRelease-1>", lambda event: updateModuleSelect(event, database)
     )
-    moduleList.grid(row=2, rowspan=4, padx=10, pady=5, sticky=N + S + W)
+    moduleList.grid(row=2, rowspan=4, padx=10, pady=10, sticky=N + S + W)
     modules = database.get_module_list()
     for index, module in enumerate(modules, start=0):
         moduleList.insert(index, module)
@@ -611,6 +612,7 @@ if __name__ == "__main__":
         text="Track module?",
         var=checkButtonStatus,
         command=lambda: enableApplyButton(database),
+        bg=bgColor
     )
     trackerCheckbox.grid(row=1, rowspan=2, column=3, sticky=S)
 
