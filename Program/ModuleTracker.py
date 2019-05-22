@@ -42,25 +42,6 @@ checkButtonStatus = IntVar()
 updateThreadListFlag = False
 
 
-def search_for_tracker(vr):
-    """Scans for active trackers.
-    
-    Arguments:
-        vr {triad_openvr} -- vr object.
-    """
-    trackerCount, searchCount = 0, 0
-    while trackerCount is 0 and searchCount < 5000:
-        print("\rSearching for trackers", end="")
-        vr.update_device_list()
-        for device in vr.devices:
-            if "tracker" not in device:
-                searchCount += 1
-                sleep(0.001)
-                continue
-            else:
-                trackerCount += 1
-
-
 def update_trackers(trackers):
     """Updates the position of active trackers and saves it to the database.
 
@@ -400,7 +381,6 @@ def restoreSteamVR():
 if __name__ == "__main__":
     try:
         vr = triad_openvr.triad_openvr()
-        vr.print_discovered_objects()
     except OpenVRError as e:
         print(e)
         print("\r\n Error: Please install SteamVR")
@@ -423,8 +403,6 @@ if __name__ == "__main__":
 
     databasePathVar.set("Database is: " + databasePath)
     database = Database(databasePath, vr)
-
-    search_for_tracker(vr)
 
     trackerArr = database.get_tracker_list()
     if trackerArr:
