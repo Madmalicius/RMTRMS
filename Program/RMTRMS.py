@@ -9,7 +9,7 @@ class Tracker:
             self.vr = vr
             self.trackerID = trackerID
             self.serial = self.vr.devices[self.trackerID].get_serial()
-            self.active = True
+            self.db.set_tracker_active_status(self, True)
             self.update_position()
             self.name = db.get_tracker_name(self)
 
@@ -17,11 +17,9 @@ class Tracker:
                 self.db.set_default_tracker_name(self)
                 self.name = self.db.get_tracker_name(self)
 
-            self.db.set_tracker_active_status(self, True)
         else:
             self.serial = serial
             self.name = self.db.get_tracker_name(self)
-            self.active = False
             self.db.set_tracker_active_status(self, False)
 
     def update_position(self):
@@ -29,14 +27,14 @@ class Tracker:
             try:
                 pose = self.vr.devices[self.trackerID].get_pose_euler()
             except AttributeError:
-                self.active = False
+                self.db.set_tracker_active_status(self, False)
                 return None
             except KeyError:
-                self.active = False
+                self.db.set_tracker_active_status(self, False)
                 return None
 
             if pose == [0, 0, 0, 0, 0, 0]:
-                self.active = False
+                self.db.set_tracker_active_status(self, False)
                 return None
 
             self.x = pose[0]
@@ -50,7 +48,7 @@ class Tracker:
         else:
             try:
                 pose = self.vr.devices[self.trackerID].get_pose_euler()
-                self.active = True
+                self.db.set_tracker_active_status(self, True)
             except AttributeError:
                 pass
             except KeyError:
@@ -58,7 +56,6 @@ class Tracker:
 
     def rename(self, name):
         self.db.set_tracker_name(self, name)
-        self.name = name
 
 
 class Database:
@@ -225,6 +222,7 @@ class Database:
                 "UPDATE trackers SET active=:status WHERE serial=:serial",
                 (status, tracker.serial),
             )
+            tracker.active = status
         except sqliteError as e:
             print(e)
 
@@ -243,6 +241,7 @@ class Database:
                 "UPDATE trackers SET name=:name WHERE serial=:serial",
                 (name, tracker.serial),
             )
+            tracker.name = name
         except sqliteError as e:
             print(e)
 
