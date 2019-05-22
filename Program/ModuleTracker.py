@@ -145,22 +145,22 @@ def manage_trackers(db):
     i = None
 
     # Create window
-    trackerWindow = tk.Toplevel(root)
+    trackerWindow = tk.Toplevel(root, bg=bgColor)
     trackerWindow.title("Manage Trackers")
     trackerWindow.grab_set()
 
     # Tracker list label
-    trackerListLabel = tk.Label(trackerWindow, text="Trackers")
-    trackerListLabel.grid(sticky=S)
+    trackerListLabel = tk.Label(trackerWindow, text="Trackers", bg=bgColor, font=11)
+    trackerListLabel.grid(sticky=E)
 
+    # Refresh Trackers button
+    refreshTrackers = tk.Button(trackerWindow, text="↻", command=lambda: update_tracker_list(db, trackerList))
+    refreshTrackers.grid(row=0, column=1, sticky=S+E, pady=10, padx=10)
+    
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
     trackerList.bind("<ButtonRelease-1>", lambda event: updateTrackerSelect(event, db, trackerList))
-    trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
-
-    # Refresh Trackers button
-    refreshTrackers = tk.Button(trackerWindow, text="Refresh", command=lambda: update_tracker_list(db, trackerList))
-    refreshTrackers.grid(row=1, column=3, sticky=W)
+    trackerList.grid(row=1, rowspan=5, columnspan=2, padx=10, pady=5, sticky=E + W)
 
     for index, tracker in enumerate(trackerNameArr, start=0):
         if tracker == selectedTracker.get():
@@ -168,26 +168,30 @@ def manage_trackers(db):
         trackerList.insert(index, tracker)
 
     # tracker renaming
-    trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:")
-    trackerNameLabel.grid(row=2, column=1, sticky=E + W)
+    trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:", bg=bgColor)
+    trackerNameLabel.grid(row=2, column=2, sticky=E + W, padx=5)
     newTrackerName = tk.Entry(trackerWindow)
-    newTrackerName.grid(row=2, column=2, sticky=E + W)
+    newTrackerName.grid(row=2, column=3, sticky=E + W)
 
     acceptName = tk.Button(
         trackerWindow,
         text="Ok",
         command=lambda: update_tracker_list(db, trackerList, newTrackerName),
     )
-    acceptName.grid(row=2, column=3)
+    acceptName.grid(row=2, column=4, padx=5)
 
+    # Remove tracker
     removeTrackerButton = tk.Button(
         trackerWindow, text="Remove", command=lambda: removeTracker(db, trackerList)
     )
-    removeTrackerButton.grid(row=3, column=2, sticky=N + E)
+    removeTrackerButton.grid(row=3, column=3, sticky=N)
 
+    # Tracker status
     hltTrackerActiveInManager.set("Select tracker")
     trackerStatus = tk.Label(trackerWindow, bg="white", relief=RIDGE, textvariable=hltTrackerActiveInManager)
-    trackerStatus.grid(row=4, column=2)
+    trackerStatus.grid(row=4, column=3, sticky=W)
+    trackerStatusLabel = tk.Label(trackerWindow, text="tracker status:", bg=bgColor)
+    trackerStatusLabel.grid(row=4, column=2, sticky=E, padx=5)
 
 
 def removeTracker(db, trackerList):
@@ -277,7 +281,7 @@ def updateTrackerSelect(event, database, trackerList):
         database {Database} -- The object linked to the current database connection.
     """
     if trackerList.curselection():
-        hltTrackerActiveInManager.set("No Tracker Assigned")
+        hltTrackerModuleAssigned.set("Not Assigned to a module")
         refresh_trackers(database)
         for tracker in trackerArr:
             if tracker.name == trackerList.get(trackerList.curselection()):
