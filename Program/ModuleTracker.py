@@ -30,17 +30,20 @@ root.config(bg=bgColor)
 databasePathVar = tk.StringVar()
 databasePath = ""
 
+# Variables for root window
 hltModule = StringVar()
 hltTracker = StringVar()
 hltTrackerActive = StringVar()
 selectedTracker = StringVar()
-
-trackerArr = []
-trackerNameArr = []
-
 checkButtonStatus = IntVar()
 updateThreadListFlag = False
 
+#Variables for tracker window
+hltTrackerActiveInManager = StringVar()
+hltTrackerModuleAssigned = StringVar()
+
+trackerArr = []
+trackerNameArr = []
 
 def update_trackers(trackers):
     """Updates the position of active trackers and saves it to the database.
@@ -152,7 +155,12 @@ def manage_trackers(db):
 
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
+    trackerList.bind("<ButtonRelease-1>", lambda event: updateTrackerSelect(event, db, trackerList))
     trackerList.grid(row=1, rowspan=5, padx=10, pady=10, sticky=E + W)
+
+    # Refresh Trackers button
+    refreshTrackers = tk.Button(trackerWindow, text="Refresh", command=lambda: update_tracker_list(db, trackerList))
+    refreshTrackers.grid(row=1, column=3, sticky=W)
 
     for index, tracker in enumerate(trackerNameArr, start=0):
         if tracker == selectedTracker.get():
@@ -177,6 +185,10 @@ def manage_trackers(db):
     )
     removeTrackerButton.grid(row=3, column=2, sticky=N + E)
 
+    hltTrackerActiveInManager.set("Select tracker")
+    trackerStatus = tk.Label(trackerWindow, bg="white", relief=RIDGE, textvariable=hltTrackerActiveInManager)
+    trackerStatus.grid(row=4, column=2)
+
 
 def removeTracker(db, trackerList):
     """Removes tracker from database.
@@ -188,7 +200,10 @@ def removeTracker(db, trackerList):
     if trackerList.curselection():
         for tracker in trackerArr:
             if tracker.name == trackerList.get(trackerList.curselection()):
+                if tracker.name == selectedTracker.get():
+                    selectedTracker.set("Select tracker")
                 db.remove_tracker(tracker)
+                hltTrackerActiveInManager.set("Select tracker")
         update_tracker_list(db, trackerList)
 
 
@@ -235,7 +250,7 @@ def rename(db, nameList, name):
 
 
 def updateModuleSelect(event, database):
-    """Saves current changes to the database.
+    """Updates the labels in the root window.
     
     Arguments:
         event {event} -- Event handler.
@@ -248,10 +263,28 @@ def updateModuleSelect(event, database):
         if assignedTracker:
             selectedTracker.set(assignedTracker.name)
         else:
-            selectedTracker.set("Choose tracker")
+            selectedTracker.set("Select tracker")
         enableApplyButton(database)
     else:
         hltModule.set("")
+    
+
+def updateTrackerSelect(event, database, trackerList):
+    """Updates the labels in the Manage Trackers window.
+    
+    Arguments:
+        event {event} -- Event handler.
+        database {Database} -- The object linked to the current database connection.
+    """
+    if trackerList.curselection():
+        hltTrackerActiveInManager.set("No Tracker Assigned")
+        refresh_trackers(database)
+        for tracker in trackerArr:
+            if tracker.name == trackerList.get(trackerList.curselection()):
+                if tracker.active:
+                    hltTrackerActiveInManager.set("Active")
+                else:
+                    hltTrackerActiveInManager.set("Inactive")
 
 
 def trackerSelect(*args, db):
@@ -334,7 +367,7 @@ def enableApplyButton(db):
                 applyButton.config(state=NORMAL)
             else:
                 applyButton.config(state=DISABLED)
-        elif not selectedTracker.get() == "Choose tracker":
+        elif not selectedTracker.get() == "Select tracker":
             applyButton.config(state=NORMAL)
         else:
             applyButton.config(state=DISABLED)
