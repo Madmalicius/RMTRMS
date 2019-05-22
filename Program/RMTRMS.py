@@ -165,7 +165,6 @@ class Database:
     def get_assigned_tracker(self, module):
         """Returns the tracker assigned to a module. 
 
-
         Arguments:
             module {String} -- The module whose tracker will be returned.
         
@@ -188,6 +187,27 @@ class Database:
             else:
                 return None
 
+        except sqliteError as e:
+            print(e)
+            return None
+
+    def get_assigned_module(self, tracker):
+        """Returns the module which the tracker is assigned to
+        
+        Arguments:
+            tracker {Tracker} -- Tracker whose assigned module will be returned
+
+        Returns:
+            module {String} -- Name of the module which the tracker is assigned to
+        """
+
+        try:
+            module = self.curs.execute(
+                "SELECT module FROM modules WHERE tracker=:serial",
+                {"serial": tracker.serial},
+            ).fetchone()[0]
+
+            return module
         except sqliteError as e:
             print(e)
             return None
