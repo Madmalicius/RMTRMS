@@ -177,18 +177,17 @@ class Database:
                 "SELECT tracker FROM modules WHERE module=:module", {"module": module}
             ).fetchone()[0]
 
-            if tracker:
-                trackerList = self.get_tracker_list()
-                for trackerFromList in trackerList:
-                    if tracker == trackerFromList.serial:
-                        tracker = trackerFromList
-                        break
-                return tracker
-            else:
-                return None
+            trackerList = self.get_tracker_list()
+            for trackerFromList in trackerList:
+                if tracker == trackerFromList.serial:
+                    tracker = trackerFromList
+                    break
+            return tracker
 
         except sqliteError as e:
             print(e)
+            return None
+        except TypeError:
             return None
 
     def get_assigned_module(self, tracker):
@@ -210,6 +209,8 @@ class Database:
             return module
         except sqliteError as e:
             print(e)
+            return None
+        except TypeError:
             return None
 
     def set_module_tracking_status(self, module, status):
