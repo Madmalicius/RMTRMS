@@ -192,8 +192,9 @@ def manage_trackers(db):
     acceptName.grid(row=2, column=3)
 
     removeTrackerButton = tk.Button(
-        trackerWindow, text="delete", command=lambda: removeTracker(db, trackerList)
+        trackerWindow, text="Remove", command=lambda: removeTracker(db, trackerList)
     )
+    removeTrackerButton.grid(row=3, column=2, sticky=N + E)
 
 
 def removeTracker(db, trackerList):
