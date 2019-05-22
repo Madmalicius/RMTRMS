@@ -377,6 +377,10 @@ class Database:
                 "DELETE FROM trackers WHERE serial = :serial",
                 {"serial": tracker.serial},
             )
+            self.curs.execute(
+                "UPDATE modules SET tracker=NULL, tracked=0 WHERE tracker=:serial",
+                {"serial": tracker.serial},
+            )
             self.db.commit()
         except sqliteError as e:
             print(e)
