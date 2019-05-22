@@ -515,7 +515,7 @@ if __name__ == "__main__":
     menu.add_command(
         label="Help",
         command=lambda: webbrowser.open_new_tab(
-            "https://github.com/Madmalicius/RMTRMS/wiki/For-Users"
+            "https://github.com/Madmalicius/RMTRMS/wiki/For-Users#using-the-gui"
         ),
     )
     menu.add_command(
