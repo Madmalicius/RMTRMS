@@ -46,6 +46,29 @@ newName = StringVar()
 trackerArr = []
 trackerNameArr = []
 
+class DatabaseDialog:
+    def __init__(self, parent):
+        self.top = Toplevel(parent)
+
+        self.top.title("Database Error")
+        self.top.grab_set()
+
+        Label(self.top, text="No database found. \nPlease create new or open an existing database.").grid(columnspan=2)
+
+        createButton = Button(self.top, text="Create", command=self.createNew).grid(row=1)
+        openButton = Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1)
+    
+    def createNew(self):
+        new_database()
+        if os.path.isfile(databasePath):
+            self.top.destroy()
+
+    def openExisting(self):
+        open_database()
+        if os.path.isfile(databasePath):
+            self.top.destroy()
+
+
 def update_trackers(trackers):
     """Updates the position of active trackers and saves it to the database.
 
@@ -466,6 +489,12 @@ if __name__ == "__main__":
         with open("config", "w") as f:
             config.write(f)
 
+    if not os.path.isfile(databasePath):
+        databaseErrorWindow = DatabaseDialog(root)
+        root.wait_window(databaseErrorWindow.top)
+        if not os.path.isfile(databasePath):
+            exit()
+    
     databasePathVar.set("Database is: " + databasePath)
     database = Database(databasePath, vr)
 
