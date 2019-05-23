@@ -91,8 +91,10 @@ User Interface
 - Button [ok]   : sendPositions
 
 Information Flow
+- Variable      : databasePath
 - TableFile     : modules
 - TableFile     : trackerPosition
+- FileInterface : configFile
 - SQLite        : positionDB
 - Method        : INIT
 - Method        : RESET
@@ -111,17 +113,23 @@ User Objects
 
 ```
 
-SQLite can be added to the toolbox through _home>Model>Manage Class Library_ under _Basic Objects>Information Flow_.
+If some blocks (such as SQLite) cannot be found in the Toolbox, they can be added through _home>Model>Manage Class Library_.
+
+An example of how the setup could looks:
+
+![Tecnomatix example](./Doc/Images/TecnomatixSetup.png)
 
 The content of the method files can be found under [MethodFiles](/Tecnomatix/MethodFiles).
 
-Right-click component and click _Rename_ to name the component.
+Right-click the component and click _Rename_ to name the component with the _Name_ entry. Renaming can also be done under the component's settings by changing the _Name_ field.
 
 Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. Double-click `Drain` and under _Controls>Entrance_ select `moveModules`.
 
+double-click the variable and set the data type to String under _Value>Data type_.
+
 right-click `sendPositions` and click open to enter settings for the button. Label is the text displayed on the button, which is recommended to set to _Send_. Under _Attributes>Control_ choose _Select Object>writeToPositionOut_.
 
-In methods `dbOpen`, `dbClose`, `moveModules` and `writeToPositionOut`, change the path of commands where instructed.
+The FileInterface, `configFile`, should be connected to the config file created by the GUI provided. Double-click `configFile` and choose the file under _Attributes>File Name_.
 
 Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`
 
