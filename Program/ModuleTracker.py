@@ -494,7 +494,7 @@ if __name__ == "__main__":
         config.add_section("database")
         config.set("database", "path", databasePath)
         with open("config", "w") as f:
-            config.write(f)
+            config.write(f, space_around_delimiters=False)
 
     if not os.path.isfile(databasePath):
         databaseErrorWindow = DatabaseDialog(root)
