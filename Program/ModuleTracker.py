@@ -25,7 +25,7 @@ bgColor = "#C5CAE9"
 root = tk.Tk()
 
 root.title("Module Manager")
-root.config(bg=bgColor)
+root.config(bg=bgColor, bd=5)
 
 databasePathVar = tk.StringVar()
 databasePath = ""
@@ -48,7 +48,7 @@ trackerNameArr = []
 
 class DatabaseDialog:
     def __init__(self, parent):
-        self.top = Toplevel(parent)
+        self.top = Toplevel(parent, relief=GROOVE)
 
         self.top.title("Database Error")
         self.top.grab_set()
@@ -134,16 +134,14 @@ def refresh_trackers(db, triggerWarning=False):
         db {Database} -- The object linked to the current database connection.
         triggerWarning {bool} -- If a warning window should open if no trackers are found in the database. Optional, default is no warning.
     """
-    global trackerArr, trackerNameArr
+    global trackerArr, trackerNameArr, updateThreadListFlag
+    updateThreadListFlag = True
     trackerArr = db.get_tracker_list()
-    if triggerWarning:
-        if trackerArr:
-            updateThreadListFlag = True
-        else:
-            tk.messagebox.showwarning(
-                "No trackers",
-                "No trackers found in database. Use the refresh button scan for trackers",
-            )
+    if triggerWarning and not trackerArr:
+        tk.messagebox.showwarning(
+            "No trackers",
+            "No trackers found in database. Use the refresh button scan for trackers",
+        )
     trackerNameArr = []
     for tracker in trackerArr:
         trackerNameArr.append(tracker.name)
@@ -161,6 +159,13 @@ def refresh_trackers(db, triggerWarning=False):
         )
 
 
+def refresh_modules(moduleList):
+    moduleList.delete(0,END)
+    modules = database.get_module_list()
+    for index, module in enumerate(modules, start=0):
+        moduleList.insert(index, module)
+
+
 def manage_trackers(db):
     """Creates a new window for tracker management.
     
@@ -170,22 +175,22 @@ def manage_trackers(db):
     i = None
 
     # Create window
-    trackerWindow = tk.Toplevel(root, bg=bgColor)
+    trackerWindow = tk.Toplevel(root, bg=bgColor, bd=5)
     trackerWindow.title("Manage Trackers")
     trackerWindow.grab_set()
 
     # Tracker list label
     trackerListLabel = tk.Label(trackerWindow, text="Trackers", bg=bgColor, font=11)
-    trackerListLabel.grid(sticky=E)
+    trackerListLabel.grid(sticky=E+S)
 
     # Refresh Trackers button
     refreshTrackers = tk.Button(trackerWindow, text="↻", command=lambda: update_tracker_list(db, trackerList))
-    refreshTrackers.grid(row=0, column=1, sticky=S+E, pady=10, padx=10)
+    refreshTrackers.grid(row=0, column=1, sticky=S+E, padx=10)
     
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
     trackerList.bind("<ButtonRelease-1>", lambda event: updateTrackerSelect(event, db, trackerList, removeTrackerButton, acceptName))
-    trackerList.grid(row=1, rowspan=5, columnspan=2, padx=10, pady=5, sticky=E + W)
+    trackerList.grid(row=1, rowspan=5, columnspan=2, padx=10, pady=10, sticky=E + W)
 
     for index, tracker in enumerate(trackerNameArr, start=0):
         if tracker == selectedTracker.get():
@@ -224,9 +229,9 @@ def manage_trackers(db):
     # Tracker status
     hltTrackerActiveInManager.set("Select tracker")
     trackerStatus = tk.Label(trackerWindow, bg="white", relief=RIDGE, textvariable=hltTrackerActiveInManager)
-    trackerStatus.grid(row=5, column=3, sticky=W)
+    trackerStatus.grid(row=5, column=3, sticky=N+W)
     trackerStatusLabel = tk.Label(trackerWindow, text="tracker status:", bg=bgColor)
-    trackerStatusLabel.grid(row=5, column=2, sticky=E, padx=5)
+    trackerStatusLabel.grid(row=5, column=2, sticky=N+E, padx=5)
 
 def enableOkButton(*args, trackerList, okBtn):
     if trackerList.curselection():
@@ -442,7 +447,9 @@ def trackerPositionThread(databasePath, vr):
         if updateThreadListFlag:
             trackerList = database.get_tracker_list()
             updateThreadListFlag = False
-        update_trackers(trackerList)
+        print(trackerList)
+        if trackerList:
+            update_trackers(trackerList)
 
 
 def configureSteamVR():
@@ -538,8 +545,8 @@ if __name__ == "__main__":
     )
 
     # Add subtabs to vrMenu
-    vrMenu.add_command(label="Configure", command=configureSteamVR)
-    vrMenu.add_command(label="Restore", command=restoreSteamVR)
+    vrMenu.add_command(label="Configure", command=lambda: configureSteamVR)
+    vrMenu.add_command(label="Restore", command=lambda: restoreSteamVR)
 
     # Add help & About buttons
     menu.add_command(
@@ -556,28 +563,30 @@ if __name__ == "__main__":
     )
 
     # Show path to active database
-    databasePathWidget = tk.Label(root, textvariable=databasePathVar)
-    databasePathWidget.grid(columnspan=4, sticky=E + W)
+    databasePathWidget = tk.Label(root, textvariable=databasePathVar, bg=bgColor)
+    databasePathWidget.grid(row=6, columnspan=5, sticky=E + W, padx=10)
 
     # Module list label
     moduleListLabel = tk.Label(root, text="Modules", bg=bgColor, font=10)
-    moduleListLabel.grid(row=1, sticky=W + S, padx=30)
-
+    moduleListLabel.grid(row=1, sticky=W + S, padx=10)
+  
     # List of known modules
     moduleList = tk.Listbox(root)
     moduleList.bind(
         "<ButtonRelease-1>", lambda event: updateModuleSelect(event, database)
     )
-    moduleList.grid(row=2, rowspan=4, padx=10, pady=10, sticky=N + S + W)
-    modules = database.get_module_list()
-    for index, module in enumerate(modules, start=0):
-        moduleList.insert(index, module)
+    moduleList.grid(row=2, rowspan=4, column=0, columnspan=2, padx=10, pady=5, sticky=N + S + E + W)
+    refresh_modules(moduleList)
+
+    # Refresh Module list
+    refreshModules = tk.Button(root, text="↻", command=lambda: refresh_modules(moduleList))
+    refreshModules.grid(row=1, column=1, sticky=S+E, padx=10)
 
     # Highlighted module label
     moduleName = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltModule, font=16
     )
-    moduleName.grid(row=1, rowspan=2, column=1, columnspan=2, sticky=E + W + S)
+    moduleName.grid(row=1, rowspan=2, column=2, columnspan=2, sticky=E + W + S)
 
     # Tracker choice
     selectedTracker.set("No module chosen")
@@ -585,26 +594,26 @@ if __name__ == "__main__":
     trackerDropdown = tk.OptionMenu(root, selectedTracker, *trackerNameArr)
     trackerDropdown.config(bg="white", fg="black")
     trackerDropdown["menu"].config(bg="white", fg="black")
-    trackerDropdown.grid(row=3, column=1, columnspan=2)
+    trackerDropdown.grid(row=3, column=2, columnspan=2)
     trackerDropdown["menu"].delete(0, "end")
 
     # Tracker serial label
     hltTracker.set("No module chosen")
     trackerSerial = tk.Label(root, bg="white", relief=RIDGE, textvariable=hltTracker)
-    trackerSerial.grid(row=4, column=2, sticky=W)
+    trackerSerial.grid(row=4, column=3, sticky=W)
 
     trackerSerialLabel = tk.Label(root, text="Serial:", bg=bgColor)
-    trackerSerialLabel.grid(row=4, column=1, sticky=E)
+    trackerSerialLabel.grid(row=4, column=2, sticky=E)
 
     # Tracker active
     hltTrackerActive.set("No module chosen")
     trackerActive = tk.Label(
         root, bg="white", relief=RIDGE, textvariable=hltTrackerActive
     )
-    trackerActive.grid(row=5, column=2, sticky=N + W)
+    trackerActive.grid(row=5, column=3, sticky=N + W)
 
     trackerActiveLabel = tk.Label(root, text="Status:", bg=bgColor)
-    trackerActiveLabel.grid(row=5, column=1, sticky=N + E)
+    trackerActiveLabel.grid(row=5, column=2, sticky=N + E)
 
     # Checkbox for using tracker on module
     trackerCheckbox = tk.Checkbutton(
@@ -614,13 +623,13 @@ if __name__ == "__main__":
         command=lambda: enableApplyButton(database),
         bg=bgColor
     )
-    trackerCheckbox.grid(row=1, rowspan=2, column=3, sticky=S)
+    trackerCheckbox.grid(row=1, rowspan=2, column=4, sticky=S)
 
     # Apply button
     applyButton = tk.Button(
         root, text="Apply", command=lambda: saveChanges(database), state=DISABLED
     )
-    applyButton.grid(row=5, column=3, sticky=N)
+    applyButton.grid(row=5, column=4, sticky=N)
 
     # Create and run thread & GUI
     trackerPosition = Thread(
