@@ -12,5 +12,3 @@ configDataArray := splitString(configData, "=");
 .Models.Frame.PositionDB.loadFromFile(.Models.Frame.databasePath);
 .Models.Frame.listModules;
 .Models.Frame.PositionDB.saveToFile(.Models.Frame.databasePath);
-
-startExtProc("powershell.exe -NoExit /C pipenv run python 'C:\\Users\\Madmal\\Documents\\Uni\\6th Semester\\Bachelor\\RMTRMS\\Program\\moduleTracker.py'", true, false);
