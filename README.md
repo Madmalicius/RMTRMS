@@ -125,11 +125,11 @@ Right-click the component and click _Rename_ to name the component with the _Nam
 
 Add a connector between `Source` and `SingleProc`, and between `SingleProc` and `Drain`. Double-click `Drain` and under _Controls>Entrance_ select `moveModules`.
 
-double-click the variable and set the data type to String under _Value>Data type_.
+Double-click the variable and set the data type to String under _Value>Data type_.
 
-right-click `sendPositions` and click open to enter settings for the button. Label is the text displayed on the button, which is recommended to set to _Send_. Under _Attributes>Control_ choose _Select Object>writeToPositionOut_.
+Right-click `sendPositions` and click open to enter settings for the button. Label is the text displayed on the button, which is recommended to set to _Send_. Under _Attributes>Control_ choose _Select Object>writeToPositionOut_.
 
-The FileInterface, `configFile`, should be connected to the config file created by the GUI provided. Double-click `configFile` and choose the file under _Attributes>File Name_.
+The FileInterface, `configFile`, should be connected to the config file created by the GUI. Double-click `configFile` and choose the file under _Attributes>File Name_.
 
 Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`
 
