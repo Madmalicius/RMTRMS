@@ -447,7 +447,6 @@ def trackerPositionThread(databasePath, vr):
         if updateThreadListFlag:
             trackerList = database.get_tracker_list()
             updateThreadListFlag = False
-        print(trackerList)
         if trackerList:
             update_trackers(trackerList)
 
