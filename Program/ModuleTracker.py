@@ -103,7 +103,7 @@ def new_database():
     config.read("config")
     config.set("database", "path", path)
     with open("config", "w") as f:
-        config.write(f)
+        config.write(f, space_around_delimiters=False)
 
 
 def open_database():
@@ -124,7 +124,7 @@ def open_database():
     config.read("config")
     config.set("database", "path", path)
     with open("config", "w") as f:
-        config.write(f)
+        config.write(f, space_around_delimiters=False)
 
 
 def refresh_trackers(db, triggerWarning=False):
@@ -532,8 +532,8 @@ if __name__ == "__main__":
     menu.add_cascade(label="SteamVR", menu=vrMenu)
 
     # Add subtabs to File
-    fileMenu.add_command(label="Create database", command=lambda: new_database)
-    fileMenu.add_command(label="Open database", command=lambda: open_database)
+    fileMenu.add_command(label="Create database", command=new_database)
+    fileMenu.add_command(label="Open database", command=open_database)
 
     # Add subtabs to Trackers
     trackerMenu.add_command(
