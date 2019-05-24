@@ -9,7 +9,7 @@ from time import sleep
 import configparser
 import triad_openvr
 from openvr import OpenVRError
-from RMTRMS import Database, Tracker
+from RMTRMS import Database, Tracker, sqlite3
 import os
 import webbrowser
 import sys
@@ -26,11 +26,14 @@ root = tk.Tk()
 
 root.title("Module Manager")
 root.config(bg=bgColor, bd=5)
+moduleList = None
 
 databasePathVar = tk.StringVar()
 databasePath = ""
 
 # Variables for root window
+vr = None
+database = None
 hltModule = StringVar()
 hltTracker = StringVar()
 hltTrackerActive = StringVar()
@@ -70,6 +73,16 @@ class DatabaseDialog:
             self.top.destroy()
 
 
+def refresh_database():
+    global vr, database, databasePath
+    database = Database(databasePath, vr)
+    refresh_modules()
+    refresh_trackers()
+    selectedTracker.set("No module chosen")
+    hltModule.set("")
+    checkButtonStatus.set(0)
+    enableApplyButton()
+
 def update_trackers(trackers):
     """Updates the position of active trackers and saves it to the database.
 
@@ -104,6 +117,7 @@ def new_database():
     config.set("database", "path", path)
     with open("config", "w") as f:
         config.write(f, space_around_delimiters=False)
+    refresh_database()
 
 
 def open_database():
@@ -113,7 +127,7 @@ def open_database():
     path = filedialog.askopenfilename(
         initialdir=".",
         title="Open database",
-        filetypes=[("database files", ".db"), ("all files", ".*")],
+        filetypes=[("database files", ".db")],
     )
 
     if path == "":
@@ -125,18 +139,19 @@ def open_database():
     config.set("database", "path", path)
     with open("config", "w") as f:
         config.write(f, space_around_delimiters=False)
+    refresh_database()
 
 
-def refresh_trackers(db, triggerWarning=False):
+def refresh_trackers(triggerWarning=False):
     """reloads all known trackers from the database.
     
     Arguments:
         db {Database} -- The object linked to the current database connection.
         triggerWarning {bool} -- If a warning window should open if no trackers are found in the database. Optional, default is no warning.
     """
-    global trackerArr, trackerNameArr, updateThreadListFlag
+    global database, trackerArr, trackerNameArr, updateThreadListFlag
     updateThreadListFlag = True
-    trackerArr = db.get_tracker_list()
+    trackerArr = database.get_tracker_list()
     if triggerWarning and not trackerArr:
         tk.messagebox.showwarning(
             "No trackers",
@@ -159,7 +174,8 @@ def refresh_trackers(db, triggerWarning=False):
         )
 
 
-def refresh_modules(moduleList):
+def refresh_modules():
+    global moduleList
     moduleList.delete(0,END)
     modules = database.get_module_list()
     for index, module in enumerate(modules, start=0):
@@ -276,7 +292,7 @@ def update_tracker_list(db, trackerList, name=None):
         rename(db, trackerList, name)
         name.delete(0,END)
 
-    refresh_trackers(db)
+    refresh_trackers()
 
     hltTrackerActiveInManager.set("Select tracker")
     hltTrackerModuleAssigned.set("Select tracker")
@@ -303,7 +319,7 @@ def rename(db, nameList, name):
             if tracker.name == selectedTracker.get():
                 tracker.rename(str(name.get()))
                 selectedTracker.set(name.get())
-                enableApplyButton(db)
+                enableApplyButton()
             else:
                 tracker.rename(str(name.get()))
 
@@ -323,7 +339,7 @@ def updateModuleSelect(event, database):
             selectedTracker.set(assignedTracker.name)
         else:
             selectedTracker.set("Select tracker")
-        enableApplyButton(database)
+        enableApplyButton()
     else:
         hltModule.set("")
     
@@ -337,7 +353,7 @@ def updateTrackerSelect(event, database, trackerList, rmvBtn, okBtn):
     """
     rmvBtn.config(state=NORMAL)
     newName.set("")
-    refresh_trackers(database)
+    refresh_trackers()
     for tracker in trackerArr:
         if tracker.name == trackerList.get(trackerList.curselection()):
             hltTrackerModuleAssigned.set(database.get_assigned_module(tracker))
@@ -355,10 +371,13 @@ def trackerSelect(*args, db):
         db {Database} -- The object linked to the current database connection.
     """
     # Check in DB where name is located
-    enableApplyButton(db)
+    enableApplyButton()
     hltTracker.set("No Tracker Assigned")
     hltTrackerActive.set("No Tracker Assigned")
-    refresh_trackers(db)
+    if selectedTracker.get() == "No module chosen":
+        hltTracker.set("No module chosen")
+        hltTrackerActive.set("No module chosen")
+    refresh_trackers()
     for tracker in trackerArr:
         if tracker.name == selectedTracker.get():
             hltTracker.set(tracker.serial)
@@ -410,18 +429,19 @@ def saveChanges(database):
     applyButton.config(state=DISABLED)
 
 
-def enableApplyButton(db):
+def enableApplyButton():
     """Checks if the apply button should be enabled.
 
     Arguments:
         db {Database} -- The object linked to the current database connection.
     """
+    global database
     if hltModule.get():
-        if db.get_assigned_tracker(hltModule.get()):
+        if database.get_assigned_tracker(hltModule.get()):
             if (
-                not db.get_assigned_tracker(hltModule.get()).name
+                not database.get_assigned_tracker(hltModule.get()).name
                 == selectedTracker.get()
-                or not db.get_tracking_status(hltModule.get())
+                or not database.get_tracking_status(hltModule.get())
                 == checkButtonStatus.get()
             ):
                 applyButton.config(state=NORMAL)
@@ -431,22 +451,26 @@ def enableApplyButton(db):
             applyButton.config(state=NORMAL)
         else:
             applyButton.config(state=DISABLED)
+    else:
+        applyButton.config(state=DISABLED)
 
 
-def trackerPositionThread(databasePath, vr):
+def trackerPositionThread():
     """Thread function: Creates new link to the database and tracker list.
 
     Arguments:
         databasePath {string} -- Path to the designated database file.
         vr {triad_openvr} -- vr object.
     """
-    global updateThreadListFlag
+    global vr, databasePath, updateThreadListFlag
     database = Database(databasePath, vr)
     trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
         if updateThreadListFlag:
             trackerList = database.get_tracker_list()
             updateThreadListFlag = False
+        if not database.databasePath == databasePath:
+            database = Database(databasePath, vr)
         if trackerList:
             update_trackers(trackerList)
 
@@ -484,26 +508,24 @@ if __name__ == "__main__":
         ):
             exit()
     config = configparser.ConfigParser()
+
     try:
         config.read("config")
         databasePath = config.get("database", "path")
     except configparser.NoSectionError:
-        databasePath = filedialog.askopenfilename()
-        if databasePath is "":
-            exit_program()
+        databasePath = ""
         config.add_section("database")
         config.set("database", "path", databasePath)
         with open("config", "w") as f:
             config.write(f, space_around_delimiters=False)
 
-    if not os.path.isfile(databasePath):
+  
+    while not (os.path.isfile(databasePath) and databasePath.endswith(".db")):
         databaseErrorWindow = DatabaseDialog(root)
         root.wait_window(databaseErrorWindow.top)
-        if not os.path.isfile(databasePath):
-            exit()
-    
-    databasePathVar.set("Database is: " + databasePath)
+
     database = Database(databasePath, vr)
+    databasePathVar.set("Database is: " + databasePath)
 
     trackerArr = database.get_tracker_list()
     if trackerArr:
@@ -537,7 +559,7 @@ if __name__ == "__main__":
 
     # Add subtabs to Trackers
     trackerMenu.add_command(
-        label="Refresh", command=lambda: refresh_trackers(database, True)
+        label="Refresh", command=lambda: refresh_trackers(True)
     )
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
@@ -575,10 +597,10 @@ if __name__ == "__main__":
         "<ButtonRelease-1>", lambda event: updateModuleSelect(event, database)
     )
     moduleList.grid(row=2, rowspan=4, column=0, columnspan=2, padx=10, pady=5, sticky=N + S + E + W)
-    refresh_modules(moduleList)
+    refresh_modules()
 
     # Refresh Module list
-    refreshModules = tk.Button(root, text="↻", command=lambda: refresh_modules(moduleList))
+    refreshModules = tk.Button(root, text="↻", command=lambda: refresh_modules())
     refreshModules.grid(row=1, column=1, sticky=S+E, padx=10)
 
     # Highlighted module label
@@ -619,7 +641,7 @@ if __name__ == "__main__":
         root,
         text="Track module?",
         var=checkButtonStatus,
-        command=lambda: enableApplyButton(database),
+        command=lambda: enableApplyButton(),
         bg=bgColor
     )
     trackerCheckbox.grid(row=1, rowspan=2, column=4, sticky=S)
@@ -632,7 +654,7 @@ if __name__ == "__main__":
 
     # Create and run thread & GUI
     trackerPosition = Thread(
-        target=trackerPositionThread, args=[databasePath, vr], daemon=False
+        target=trackerPositionThread, daemon=False
     )
     trackerPosition.start()
 
