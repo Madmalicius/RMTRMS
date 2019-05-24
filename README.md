@@ -103,6 +103,7 @@ Information Flow
 - Method        : dbClose
 - Method        : listModules
 - Method        : moveModules
+- Method        : updatePath
 - Method        : updatePosition
 - Method        : updateModules
 - Method        : writeToPositionOut
