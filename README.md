@@ -117,7 +117,7 @@ If some blocks (such as SQLite) cannot be found in the Toolbox, they can be adde
 
 An example of how the setup could looks:
 
-![Tecnomatix example](/Doc/Images/TecnomatixSetup.png?raw=true)
+![Tecnomatix example](./Doc/Images/TecnomatixSetup.PNG?raw=true)
 
 The content of the method files can be found under [MethodFiles](/Tecnomatix/MethodFiles).
 
