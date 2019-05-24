@@ -1,0 +1,10 @@
+var configData:string
+var configDataArray:string[]
+
+.Models.Frame.configFile.goToLine(2);
+
+configData := .Models.Frame.configFile.readLn;
+.Models.Frame.configFile.close;
+
+configDataArray := splitString(configData, "=");
+.Models.Frame.databasePath := configDataArray[2];

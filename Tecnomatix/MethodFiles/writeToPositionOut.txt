@@ -4,7 +4,8 @@ var x,y,yaw:real;
 var row:integer;
 
 if not .Models.Frame.PositionDB.isOpen then
-	.Models.Frame.PositionDB.open()
+	.Models.Frame.PositionDB.open();
+	.Models.Frame.updatePath;
 	.Models.Frame.PositionDB.loadFromFile(.Models.Frame.databasePath);
 end;
 

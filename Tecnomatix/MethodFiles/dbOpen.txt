@@ -1,13 +1,5 @@
-var configData:string
-var configDataArray:string[]
-
 .Models.Frame.PositionDB.open();
-.Models.Frame.configFile.goToLine(2);
-
-configData := .Models.Frame.configFile.readLn;
-.Models.Frame.configFile.close;
-configDataArray := splitString(configData, "=");
-.Models.Frame.databasePath := configDataArray[2];
+.Models.Frame.updatePath;
 
 .Models.Frame.PositionDB.loadFromFile(.Models.Frame.databasePath);
 .Models.Frame.listModules;
