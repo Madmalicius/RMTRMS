@@ -422,12 +422,3 @@ class Database:
             self.db.commit()
         except sqliteError as e:
             print(e)
-
-    def check_close(self):
-        """Checks the close field of the database
-
-        Returns:
-            int -- 1 if the program should close
-        """
-
-        return self.curs.execute("SELECT close FROM terminate").fetchone()[0]

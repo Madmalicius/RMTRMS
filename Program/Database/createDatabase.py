@@ -73,22 +73,6 @@ def create_database(path="Modules.db"):
     except Error as e:
         print(e)
 
-    sql = """
-    CREATE TABLE IF NOT EXISTS terminate (
-    id INTEGER PRIMARY KEY,
-    close BIT NOT NULL
-    );
-    """
-    try:
-        curs.execute(sql)
-    except Error as e:
-        print(e)
-
-    try:
-        curs.execute("INSERT INTO terminate (close) VALUES (0)")
-    except Error as e:
-        print(e)
-
     conn.commit()
     conn.close()
 
