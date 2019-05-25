@@ -12,7 +12,7 @@ import subprocess
 
 
 class SteamVRRunningError(Exception):
-    """ Raised when SteamVR is running while trying to modify conifg files"""
+    """ Raised when SteamVR is running while trying to modify config files"""
 
     pass
 
