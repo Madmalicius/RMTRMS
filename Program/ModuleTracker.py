@@ -71,14 +71,17 @@ class DatabaseDialog:
 
 
 def refresh_database():
-    global database, databasePath
+    global database, databasePath, moduleList
+    if database:
+        database.db.close()
     database = Database(databasePath, vr=True)
-    refresh_modules()
-    refresh_trackers()
-    selectedTracker.set("No module chosen")
-    hltModule.set("")
-    checkButtonStatus.set(0)
-    enableApplyButton()
+    if moduleList:
+        refresh_modules()
+        refresh_trackers()
+        selectedTracker.set("No module chosen")
+        hltModule.set("")
+        checkButtonStatus.set(0)
+        enableApplyButton()
 
 def update_trackers(trackers):
     """Updates the position of active trackers and saves it to the database.
