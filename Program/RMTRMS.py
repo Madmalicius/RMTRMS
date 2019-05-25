@@ -1,5 +1,13 @@
 import sqlite3
 from sqlite3 import Error as sqliteError
+import triad_openvr
+from openvr import OpenVRError
+
+
+class SteamVRNotFoundError(Exception):
+    """ Raised when SteamVR is not installed"""
+
+    pass
 
 
 class Tracker:
@@ -59,7 +67,13 @@ class Tracker:
 
 
 class Database:
-    def __init__(self, db, vr=None):
+    """Database object that can interact with an SQlite database, as well as OpenVR.
+
+    Arguments:
+        db {String} -- Path to database
+    """
+
+    def __init__(self, db, vr=True):
         self.databasePath = db
         try:
             self.db = sqlite3.connect(db)
@@ -68,8 +82,11 @@ class Database:
         self.curs = self.db.cursor()
         self.curs.execute("PRAGMA main.synchronous=NORMAL")
 
-        if vr is not None:
-            self.vr = vr
+        if vr:
+            try:
+                self.vr = triad_openvr.triad_openvr()
+            except OpenVRError:
+                raise SteamVRNotFoundError
 
     def get_module_list(self):
         """Returns a list of modules.

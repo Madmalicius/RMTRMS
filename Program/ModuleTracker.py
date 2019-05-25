@@ -7,9 +7,7 @@ import threading
 from threading import Thread
 from time import sleep
 import configparser
-import triad_openvr
-from openvr import OpenVRError
-from RMTRMS import Database, Tracker, sqlite3
+from RMTRMS import *
 import os
 import webbrowser
 import sys
@@ -32,7 +30,6 @@ databasePathVar = tk.StringVar()
 databasePath = ""
 
 # Variables for root window
-vr = None
 database = None
 hltModule = StringVar()
 hltTracker = StringVar()
@@ -74,8 +71,8 @@ class DatabaseDialog:
 
 
 def refresh_database():
-    global vr, database, databasePath
-    database = Database(databasePath, vr)
+    global database, databasePath
+    database = Database(databasePath, vr=True)
     refresh_modules()
     refresh_trackers()
     selectedTracker.set("No module chosen")
@@ -457,20 +454,16 @@ def enableApplyButton():
 
 def trackerPositionThread():
     """Thread function: Creates new link to the database and tracker list.
-
-    Arguments:
-        databasePath {string} -- Path to the designated database file.
-        vr {triad_openvr} -- vr object.
     """
-    global vr, databasePath, updateThreadListFlag
-    database = Database(databasePath, vr)
+    global databasePath, updateThreadListFlag
+    database = Database(databasePath, vr=True)
     trackerList = database.get_tracker_list()
     while threading.main_thread().isAlive():
         if updateThreadListFlag:
             trackerList = database.get_tracker_list()
             updateThreadListFlag = False
         if not database.databasePath == databasePath:
-            database = Database(databasePath, vr)
+            database = Database(databasePath, vr=True)
         if trackerList:
             update_trackers(trackerList)
 
@@ -498,15 +491,7 @@ def restoreSteamVR():
 
 
 if __name__ == "__main__":
-    try:
-        vr = triad_openvr.triad_openvr()
-    except OpenVRError as e:
-        print(e)
-        print("\r\n Error: Please install SteamVR")
-        if tk.messagebox.showerror(
-            "SteamVR Error", "SteamVR not found. Please install SteamVR"
-        ):
-            exit()
+    
     config = configparser.ConfigParser()
 
     try:
@@ -524,7 +509,15 @@ if __name__ == "__main__":
         databaseErrorWindow = DatabaseDialog(root)
         root.wait_window(databaseErrorWindow.top)
 
-    database = Database(databasePath, vr)
+    try:
+        database = Database(databasePath, vr=True)
+    except SteamVRNotFoundError as e:
+        print(e)
+        print("\r\n Error: Please install SteamVR")
+        if tk.messagebox.showerror(
+            "SteamVR Error", "SteamVR not found. Please install SteamVR"
+        ):
+            exit()
     databasePathVar.set("Database is: " + databasePath)
 
     trackerArr = database.get_tracker_list()
