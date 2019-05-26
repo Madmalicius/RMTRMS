@@ -32,6 +32,8 @@ class Tracker:
             self.db.set_tracker_active_status(self, False)
 
     def update_position(self):
+        """Updates the position of the tracker if it is active.
+        """
         if self.active is True:
             try:
                 pose = self.vr.devices[self.trackerID].get_pose_euler()
@@ -64,9 +66,18 @@ class Tracker:
                 pass
 
     def rename(self, name):
+        """Renames the tracker in the database
+        
+        Arguments:
+            name {String} -- The new name for the tracker
+        """
+
         self.db.set_tracker_name(self, name)
+        self.name = name
 
     def identify(self):
+        """Turns on the rumble output of the tracker for 1 second
+        """
         self.db.vr.vr.triggerHapticPulse(self.index, 0, 1000000)
 
 
