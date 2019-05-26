@@ -16,6 +16,7 @@ class Tracker:
         if vr:
             self.vr = vr
             self.trackerID = trackerID
+            self.index = self.vr.devices[self.trackerID].index
             self.serial = self.vr.devices[self.trackerID].get_serial()
             self.db.set_tracker_active_status(self, True)
             self.update_position()
@@ -64,6 +65,9 @@ class Tracker:
 
     def rename(self, name):
         self.db.set_tracker_name(self, name)
+
+    def identify(self):
+        self.db.vr.vr.triggerHapticPulse(self.index, 0, 1000000)
 
 
 class Database:
