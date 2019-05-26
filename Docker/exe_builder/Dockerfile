@@ -1,8 +1,5 @@
 FROM ubuntu
 
-RUN apt-get update && apt-get install wine-stable python3 python3-pip -y
-RUN pip3 install pipenv
-
-#required for pipenv
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+RUN apt-get update && apt-get install wine-stable wget
+RUN wget https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe
+RUN wine python-3.7.3.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
