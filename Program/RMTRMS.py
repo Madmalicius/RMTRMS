@@ -245,6 +245,20 @@ class Database:
         except TypeError:
             return None
 
+    def get_module_position(self, module):
+        """Returns the position of the specified module
+        
+        Arguments:
+            module {String} -- The name of the module
+        """
+
+        try:
+            position = self.curs.execute("SELECT positionX,positionY,yaw FROM positionOut WHERE module=:module", {"module" : module}).fetchone()
+            return position
+        except sqliteError as e:
+            print(e)
+            return None
+
     def set_module_tracking_status(self, module, status):
         """Sets the tracking status of the specified module.
         
