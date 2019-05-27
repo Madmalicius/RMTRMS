@@ -1,1 +1,4 @@
+if .Models.Frame.PositionDB.isOpen then
+	.Models.Frame.PositionDB.saveToFile(.Models.Frame.databasePath);
+end;
 .Models.Frame.PositionDB.close;
