@@ -336,7 +336,6 @@ def rename(db, nameList, name):
         return None
     for tracker in trackerArr:
         if tracker.name == nameList.get(i[0]):
-            print(tracker.name + " " + selectedTracker.get())
             if tracker.name == selectedTracker.get():
                 tracker.rename(str(name.get()))
                 selectedTracker.set(name.get())
