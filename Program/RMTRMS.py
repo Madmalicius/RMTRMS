@@ -453,6 +453,20 @@ class Database:
         except sqliteError as e:
             print(e)
 
+class QuietServer(bottle.ServerAdapter):
+    """An adapted server from https://stackoverflow.com/a/16056443
+    """
+    def run(self, handler):
+        from wsgiref.simple_server import make_server, WSGIRequestHandler
+        class QuietHandler(WSGIRequestHandler):
+            def log_request(*args, **kw): pass
+        self.options['handler_class'] = QuietHandler
+        self._server = make_server(self.host, self.port, handler, **self.options)
+        self._server.serve_forever()
+
+    def stop(self):
+        self._server.shutdown()
+        self._server.server_close()
 class Server:
     """Server object that returns 7 values
 
@@ -461,6 +475,9 @@ class Server:
 
     These correspond to:
     Tracker Active -- Tracker X Position -- Tracker Y Position -- Tracker Yaw -- Module X Position -- Module Y Position -- Module Yaw
+
+    Returns:
+        Server {QuietServer} -- The server the application is using
     """
     def __init__(self, databasePath=None, host="0.0.0.0", port=8000):
         self._database = Database(databasePath)
@@ -470,13 +487,15 @@ class Server:
         self._app = bottle.Bottle()
         self._route()
 
+        self.server = QuietServer(host=self._host, port=self._port)
+
     def _route(self):
         self._app.route("/modules/<module_name>", callback=self.get_module)
 
     def start(self):
         """Run the server
         """
-        self._app.run(host=self._host, port=self._port, debug=False)
+        self._app.run(server=self.server)
 
     def stop(self):
         """Stop the server
