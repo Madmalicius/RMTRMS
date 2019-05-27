@@ -13,9 +13,9 @@ for var i := 1 to .Models.Frame.modules.ydim;
 	moduleName := .Models.Frame.modules[2,i];
 	module := moduleName;
 	
-	x := module._3D.Position[1];
-	y := module._3D.Position[2];
-	yaw := module._3D.Rotation[1];
+	x := round(module._3D.Position[1], 5);
+	y := round(module._3D.Position[2], 5);
+	yaw := round(module._3D.Rotation[1], 5);
 	sql := "INSERT or IGNORE INTO positionOut (module, positionX, positionY, yaw) VALUES (\"" + moduleName + "\", " + num_to_str(x) + ", " + num_to_str(y) + ", " + num_to_str(yaw) + ")";
 	.Models.Frame.PositionDB.exec(sql);
 	sql := "UPDATE or IGNORE positionOut SET positionX="+num_to_str(x)+", positionY="+num_to_str(y)+", yaw="+num_to_str(yaw)+" WHERE module=\"" + moduleName + "\"";
