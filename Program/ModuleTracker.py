@@ -650,12 +650,14 @@ if __name__ == "__main__":
     trackerMenu = tk.Menu(menu, tearoff=False)
     vrMenu = tk.Menu(menu, tearoff=False)
     serverMenu = tk.Menu(menu, tearoff=False)
+    helpMenu = tk.Menu(menu, tearoff=False)
 
     # Add tabs to Menu
     menu.add_cascade(label="File", menu=fileMenu)
     menu.add_cascade(label="Trackers", menu=trackerMenu)
     menu.add_cascade(label="Server", menu=serverMenu)
     menu.add_cascade(label="SteamVR", menu=vrMenu)
+    menu.add_cascade(label="Help", menu=helpMenu)
 
     # Add subtabs to File
     fileMenu.add_command(label="Create database", command=new_database)
@@ -677,15 +679,15 @@ if __name__ == "__main__":
     vrMenu.add_command(label="Configure", command=configureSteamVR)
     vrMenu.add_command(label="Restore", command=restoreSteamVR)
 
-    # Add help & About buttons
-    menu.add_command(
-        label="Help",
+    # Add subtabs to helpMenu
+    helpMenu.add_command(
+        label="Documentation",
         command=lambda: webbrowser.open_new_tab(
             "https://github.com/Madmalicius/RMTRMS/wiki/For-Users#using-the-gui"
         ),
     )
-    menu.add_command(label="Report Issue", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/issues/new"))
-    menu.add_command(
+    helpMenu.add_command(label="Report Issue", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/issues/new"))
+    helpMenu.add_command(
         label="About",
         command=lambda: webbrowser.open_new_tab(
             "https://github.com/Madmalicius/RMTRMS/graphs/contributors"
