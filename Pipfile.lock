@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0707d3a0df5dda245dadc0c983ed23c2eaeeea2ce50a94809c2db85b76078095"
+            "sha256": "683b8353b203c1b8258f2ef5abadc6ecab2958e7164ea6169a86ef0100165c69"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,14 @@
         ]
     },
     "default": {
+        "bottle": {
+            "hashes": [
+                "sha256:9c310da61e7df2b6ac257d8a90811899ccb3a9743e77e947101072a2e3186726",
+                "sha256:ca43beafbdccabbe31b758a4f34d1e44985a9b9539516775208b2b0f903eafa0"
+            ],
+            "index": "pypi",
+            "version": "==0.12.16"
+        },
         "openvr": {
             "hashes": [
                 "sha256:8c559018d08ad4e3c80da44065a6052fb59cab7fc4f86e4c9144692f70750439"

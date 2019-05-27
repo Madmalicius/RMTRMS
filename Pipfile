@@ -9,6 +9,7 @@ pyinstaller = "*"
 
 [packages]
 openvr = "*"
+bottle = "*"
 
 [requires]
 python_version = "3.7"
