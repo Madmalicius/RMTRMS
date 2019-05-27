@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error as sqliteError
+import bottle
 import triad_openvr
 from openvr import OpenVRError
 
@@ -451,3 +452,64 @@ class Database:
             self.db.commit()
         except sqliteError as e:
             print(e)
+
+class Server:
+    """Server object that returns 7 values
+
+    The output is in the format:
+    {Bool} {Float} {Float} {Float} {Float} {Float} {Float}
+
+    These correspond to:
+    Tracker Active -- Tracker X Position -- Tracker Y Position -- Tracker Yaw -- Module X Position -- Module Y Position -- Module Yaw
+    """
+    def __init__(self, databasePath=None, host="0.0.0.0", port=8000):
+        self._database = Database(databasePath)
+
+        self._host = host
+        self._port = port
+        self._app = bottle.Bottle()
+        self._route()
+
+    def _route(self):
+        self._app.route("/modules/<module_name>", callback=self.get_module)
+
+    def start(self):
+        """Run the server
+        """
+        self._app.run(host=self._host, port=self._port, debug=False)
+
+    def stop(self):
+        """Stop the server
+        """
+        self._app.close()
+
+    def get_module(self, module_name=None):
+        """Return the desired module's tracker and position information
+        
+        Keyword Arguments:
+            module_name {String} -- Name of the module as it appears in the database (case sensitive) (default: {None})
+        
+        Returns:
+            Active {Bool} -- The active status of the assigned tracker.
+            Tracker Position X {Float} -- X position of the assigned tracker.
+            Tracker Position Y {Float} -- Y position of the assigned tracker.
+            Tracker Yaw {Float} -- Yaw of the assigned tracker.
+            Module Position X {Float} -- Desired X position of the specified module
+            Module Position Y {Float} -- Desired Y position of the specified module
+            Module Yaw {Float} -- Desired yaw of the specified module
+        """
+        tracker = self._database.get_assigned_tracker(module_name)
+        
+        if tracker is None:
+            return "0 0 0 0 0 0 0"
+
+        moduleX, moduleY, moduleYaw = self._database.get_module_position(module_name)
+
+        if tracker.active:
+            response = "{:b} {:f} {:f} {:f} {:f} {:f} {:f}".format(
+                1, tracker.x, tracker.y, tracker.yaw, moduleX, moduleY, moduleYaw
+            )
+        else:
+            response = "0 0 0 0 0 0 0"
+
+        return response
