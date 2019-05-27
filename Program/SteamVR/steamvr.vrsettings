@@ -20,4 +20,9 @@
       "forcedDriver" : "null",
       "requireHmd" : false
    }
+	"power" : {
+		"powerOffOnExit" : true,
+		"turnOffControllersTimeout" : 0,
+		"autoLaunchSteamVROnButtonPress" : false
+	}
 }
