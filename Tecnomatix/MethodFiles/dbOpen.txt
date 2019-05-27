@@ -3,4 +3,5 @@
 
 .Models.Frame.PositionDB.loadFromFile(.Models.Frame.databasePath);
 .Models.Frame.listModules;
+.Models.Frame.writeToPositionOut;
 .Models.Frame.PositionDB.saveToFile(.Models.Frame.databasePath);
