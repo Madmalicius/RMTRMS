@@ -517,18 +517,21 @@ class Server:
             Module Position Y {Float} -- Desired Y position of the specified module
             Module Yaw {Float} -- Desired yaw of the specified module
         """
-        tracker = self._database.get_assigned_tracker(module_name)
-        
-        if tracker is None:
+        if self._database.get_tracking_status(module_name):
             return "0 0 0 0 0 0 0"
-
-        moduleX, moduleY, moduleYaw = self._database.get_module_position(module_name)
-
-        if tracker.active:
-            response = "{:b} {:f} {:f} {:f} {:f} {:f} {:f}".format(
-                1, tracker.x, tracker.y, tracker.yaw, moduleX, moduleY, moduleYaw
-            )
         else:
-            response = "0 0 0 0 0 0 0"
+            tracker = self._database.get_assigned_tracker(module_name)
+            
+            if tracker is None:
+                return "0 0 0 0 0 0 0"
 
-        return response
+            moduleX, moduleY, moduleYaw = self._database.get_module_position(module_name)
+
+            if tracker.active:
+                response = "{:b} {:f} {:f} {:f} {:f} {:f} {:f}".format(
+                    1, tracker.x, tracker.y, tracker.yaw, moduleX, moduleY, moduleYaw
+                )
+            else:
+                response = "0 0 0 0 0 0 0"
+
+            return response
