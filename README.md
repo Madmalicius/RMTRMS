@@ -158,18 +158,27 @@ The GUI interface has several top menu options.
 - Refresh: Reloads the list of known trackers from the database.
 - Manage Trackers: Opens a new window for tracker management. See [Manage Trackers Window](#Manage-Trackers-Window).
 
+**Server**: With subtabs _Start Server_ and _Stop Server_
+
+- Start Server: Opens a dialog with _Host_ and _Port_ entries for the server's IP and Port.
+- Stop Server: Closes the currently running server.
+
 **SteamVR**: With subtabs _Configure_ and _Restore_.
 
 - Configure: Sets up SteamVR to run in headless mode so only lighthouses and trackers are needed.
 - Restore: Reverts SteamVR back to the default settings.
 
-**Help**: Opens the help page on Github.
+**Help**: With subtabs _Documentation_, _Report Issue_, and _About_.
 
-**About**: Opens the About page on Github.
+- Documentation: Opens the wiki page on Github.
+- Report Issue: Opens a new issue on Github.
+- About: Opens the About page on Github.
 
 ### Main Window Interface
 
 On the main window, the list on the left side shows all modules created in Tecnomatix. This list includes _User Object Frames_ and _Single Procs_.
+
+The refresh button above the list reloads all known modules from the database.
 
 The white label in the middle of the GUI displays the name of the selected module from the list.
 
@@ -185,4 +194,8 @@ The Apply button assigns the current chosen tracker to the highlighted module al
 
 The Manage Trackers window shows a list of all known trackers with the ability to rename or delete them from the database.
 
+The refresh button above the list reloads all known trackers from the database.
+
 The desired name is entered into the textfield and the tracker to be renamed should be highlighted on the list to the left. The _Ok_ button saves the new name for the tracker in the database.
+
+Tracker serial and status can be seen for each available tracker. When a tracker is chosen, the fields underneath the name entry will change accordingly.
