@@ -269,7 +269,7 @@ def manage_trackers(db):
 
     # tracker renaming
     newName.set("")
-    newName.trace("w", lambda *args: enableOkButton(*args, trackerList=trackerList, okBtn=acceptName))
+    newNameTracer = newName.trace("w", lambda *args: enableOkButton(*args, trackerList=trackerList, okBtn=acceptName))
     trackerNameLabel = tk.Label(trackerWindow, text="Rename tracker:", bg=bgColor)
     trackerNameLabel.grid(row=2, column=2, sticky=E + W, padx=5)
     newTrackerName = tk.Entry(trackerWindow, textvariable=newName)
@@ -306,6 +306,15 @@ def manage_trackers(db):
     trackerStatus.grid(row=5, column=3, sticky=N+W)
     trackerStatusLabel = tk.Label(trackerWindow, text="tracker status:", bg=bgColor)
     trackerStatusLabel.grid(row=5, column=2, sticky=N+E, padx=5)
+
+    # Window close function
+    trackerWindow.protocol("WM_DELETE_WINDOW", lambda *args: closeTrackerWindow(*args, window=trackerWindow, name=newName, tracer=newNameTracer))
+
+
+def closeTrackerWindow(*args, window, name, tracer):
+    name.trace_remove("write", tracer)
+    window.destroy()
+
 
 def enableOkButton(*args, trackerList, okBtn):
     if trackerList.curselection():
@@ -765,6 +774,6 @@ if __name__ == "__main__":
     root.mainloop()
 
     database.db.close()
-    
+
     if serverObject:
         serverObject.close()
