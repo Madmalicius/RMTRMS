@@ -132,7 +132,9 @@ Right-click `sendPositions` and click open to enter settings for the button. Lab
 
 The FileInterface, `configFile`, should be connected to the config file created by the GUI. Double-click `configFile` and choose the file under _Attributes>File Name_.
 
-Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`
+Tecnomatix needs access to the computer. This is given by going to _File>Model Settings>general_ and uncheck `Prohibit access to the computer`.
+
+A new origin can be assigned by opening the 2D frame and pressing `Ctrl+R`. Then under _Axis Origin_ set new X- and Y-coordinates.
 
 Lastly, click the _Home>Navigate>Open 2D/3D_ button, accept the default 3D graphics.
 
