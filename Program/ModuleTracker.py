@@ -562,7 +562,7 @@ def serverThread():
     while threading.main_thread().is_alive():
         if startServerFlag:
             server = Server(databasePath, hostIp.get(), int(port.get()))
-            serverObject = server.server
+            serverObject = server
             server.start()
 
 
@@ -768,14 +768,14 @@ if __name__ == "__main__":
         target=trackerPositionThread, daemon=False
     )
 
-    server = Thread(target=serverThread, daemon=False)
+    server = Thread(target=serverThread, daemon=True)
 
     trackerPosition.start()
     server.start()
 
     root.mainloop()
 
-    database.db.close()
-
     if serverObject:
-        serverObject.close()
+        serverObject.stop()
+
+    database.db.close()
