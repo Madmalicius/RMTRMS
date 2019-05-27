@@ -501,6 +501,7 @@ class Server:
         """Stop the server
         """
         self._app.close()
+        self._database.close()
 
     def get_module(self, module_name=None):
         """Return the desired module's tracker and position information
