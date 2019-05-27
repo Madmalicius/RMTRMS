@@ -205,7 +205,7 @@ def manage_trackers(db):
     
     # Tracker list
     trackerList = tk.Listbox(trackerWindow)
-    trackerList.bind("<ButtonRelease-1>", lambda event: updateTrackerSelect(event, db, trackerList, removeTrackerButton, acceptName))
+    trackerList.bind("<ButtonRelease-1>", lambda event: updateTrackerSelect(event, db, trackerList, removeTrackerButton, acceptName, identifyTracker))
     trackerList.grid(row=1, rowspan=5, columnspan=2, padx=10, pady=10, sticky=E + W)
 
     for index, tracker in enumerate(trackerNameArr, start=0):
@@ -235,6 +235,10 @@ def manage_trackers(db):
     )
     removeTrackerButton.grid(row=3, column=3, sticky=N)
 
+    # Identify tracker -- Light an LED
+    identifyTracker = tk.Button(trackerWindow, text="Identify", command=lambda: identify_tracker(trackerList), state=DISABLED)
+    identifyTracker.grid(row=3, column=2, sticky=N)
+
     # Assigned module
     hltTrackerModuleAssigned.set("Select tracker")
     assignedModule = tk.Label(trackerWindow, bg="white", relief=RIDGE, textvariable=hltTrackerModuleAssigned)
@@ -255,6 +259,23 @@ def enableOkButton(*args, trackerList, okBtn):
             okBtn.config(state=NORMAL)
         else:
             okBtn.config(state=DISABLED)
+
+
+def enableIdentifyButton(trackerList, identifyBtn):
+    global trackerArr
+    identifyBtn.config(state=DISABLED)
+    if trackerList.curselection():
+        for tracker in trackerArr:
+            if tracker.name == trackerList.get(trackerList.curselection()):
+                if tracker.active:
+                    identifyBtn.config(state=NORMAL)
+
+
+def identify_tracker(trackerList):
+    global trackerArr
+    for tracker in trackerArr:
+        if tracker.name == trackerList.get(trackerList.curselection()):
+            tracker.identify()
 
 def removeTracker(db, trackerList, nameEntry, rmvBtn):
     """Removes tracker from database.
@@ -344,7 +365,7 @@ def updateModuleSelect(event, database):
         hltModule.set("")
     
 
-def updateTrackerSelect(event, database, trackerList, rmvBtn, okBtn):
+def updateTrackerSelect(event, database, trackerList, rmvBtn, okBtn, identifyBtn):
     """Updates the labels in the Manage Trackers window.
     
     Arguments:
@@ -354,6 +375,7 @@ def updateTrackerSelect(event, database, trackerList, rmvBtn, okBtn):
     rmvBtn.config(state=NORMAL)
     newName.set("")
     refresh_trackers()
+    enableIdentifyButton(trackerList, identifyBtn)
     for tracker in trackerArr:
         if tracker.name == trackerList.get(trackerList.curselection()):
             hltTrackerModuleAssigned.set(database.get_assigned_module(tracker))
@@ -466,6 +488,7 @@ def trackerPositionThread():
             trackerList = database.get_tracker_list()
             updateThreadListFlag = False
         if not database.databasePath == databasePath:
+            database.db.close()
             database = Database(databasePath, vr=True)
         if trackerList:
             update_trackers(trackerList)
