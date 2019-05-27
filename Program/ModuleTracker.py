@@ -82,6 +82,7 @@ class StartServerDialog:
 
         self.top.title("Server Connection")
         self.top.grab_set()
+        self.top.protocol("WM_DELETE_WINDOW", self.close)
 
         Label(self.top, text="Host:").grid()
         Entry(self.top, textvariable=hostIp).grid(row=0, column=1)
@@ -93,15 +94,16 @@ class StartServerDialog:
         self.startButton.grid(row=2, column=1, sticky=E)
 
         hostIp.set("")
-        hostIp.trace("w", self.enableStartBtn)
+        self.hostIpTrace = hostIp.trace("w", self.enableStartBtn)
         port.set("")
-        port.trace("w", self.enableStartBtn)
+        self.portTrace = port.trace("w", self.enableStartBtn)
+
 
     def startServer(self):
-        global startServerFlag
+        global startServerFlag, hostIp, port
         if not startServerFlag:
             startServerFlag = True
-            self.top.destroy()
+            self.close()
     
     def enableStartBtn(self, *args):
         global startServerFlag
@@ -110,6 +112,10 @@ class StartServerDialog:
         else:
             self.startButton.config(state=DISABLED)
 
+    def close(self):
+        hostIp.trace_remove("write", self.hostIpTrace)
+        port.trace_remove("write", self.portTrace)
+        self.top.destroy()
 
 def createServerDialog(root):
     if not startServerFlag:
@@ -751,7 +757,7 @@ if __name__ == "__main__":
         target=trackerPositionThread, daemon=False
     )
 
-    server = Thread(target=serverThread)
+    server = Thread(target=serverThread, daemon=False)
 
     trackerPosition.start()
     server.start()
@@ -759,3 +765,6 @@ if __name__ == "__main__":
     root.mainloop()
 
     database.db.close()
+    
+    if serverObject:
+        serverObject.close()
