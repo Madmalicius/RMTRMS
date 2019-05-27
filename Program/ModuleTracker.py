@@ -38,10 +38,16 @@ selectedTracker = StringVar()
 checkButtonStatus = IntVar()
 updateThreadListFlag = False
 
-#Variables for tracker window
+# Variables for tracker window
 hltTrackerActiveInManager = StringVar()
 hltTrackerModuleAssigned = StringVar()
 newName = StringVar()
+
+# Variables for server connection
+hostIp = StringVar()
+port = StringVar()
+startServerFlag = False
+serverObject = None
 
 trackerArr = []
 trackerNameArr = []
@@ -56,8 +62,8 @@ class DatabaseDialog:
 
         Label(self.top, text="No database found. \nPlease create a new,\n or open an existing database.").grid(columnspan=2, padx=20, pady=10)
 
-        createButton = Button(self.top, text="Create", command=self.createNew).grid(row=1, padx=20, pady=10, sticky=E)
-        openButton = Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1, padx=20, pady=10, sticky=W)
+        Button(self.top, text="Create", command=self.createNew).grid(row=1, padx=20, pady=10, sticky=E)
+        Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1, padx=20, pady=10, sticky=W)
     
     def createNew(self):
         new_database()
@@ -69,6 +75,48 @@ class DatabaseDialog:
         if os.path.isfile(databasePath):
             self.top.destroy()
 
+
+class StartServerDialog:
+    def __init__(self, parent):
+        self.top = Toplevel(parent, bd=5)
+
+        self.top.title("Server Connection")
+        self.top.grab_set()
+
+        Label(self.top, text="Host:").grid()
+        Entry(self.top, textvariable=hostIp).grid(row=0, column=1)
+
+        Label(self.top, text="Port:").grid(row=1)
+        Entry(self.top, textvariable=port).grid(row=1, column=1)
+
+        self.startButton = Button(self.top, text="Start", command=self.startServer, state=DISABLED)
+        self.startButton.grid(row=2, column=1, sticky=E)
+
+        hostIp.set("")
+        hostIp.trace("w", self.enableStartBtn)
+        port.set("")
+        port.trace("w", self.enableStartBtn)
+
+    def startServer(self):
+        global startServerFlag
+        if not startServerFlag:
+            startServerFlag = True
+            self.top.destroy()
+    
+    def enableStartBtn(self, *args):
+        global startServerFlag
+        if not startServerFlag and (hostIp.get() or port.get()):
+            self.startButton.config(state=NORMAL)
+        else:
+            self.startButton.config(state=DISABLED)
+
+
+def createServerDialog(root):
+    if not startServerFlag:
+        serverDialog = StartServerDialog(root)
+        root.wait_window(serverDialog.top)
+    else:
+        tk.messagebox.showwarning("Server Open", "A server is already open. Close the current server to make a new connection")
 
 def refresh_database():
     global database, databasePath, moduleList
@@ -493,6 +541,27 @@ def trackerPositionThread():
             update_trackers(trackerList)
 
 
+def serverThread():
+    """Thread function: Controls connection to server"""
+    global serverObject, hostIp, port, databasePath, startServerFlag
+    while threading.main_thread().is_alive():
+        if startServerFlag:
+            server = Server(databasePath, hostIp.get(), int(port.get()))
+            serverObject = server.server
+            server.start()
+
+
+def stopServer():
+    global serverObject, startServerFlag
+    if startServerFlag:
+        startServerFlag = False
+        serverObject.stop()
+        tk.messagebox.showinfo("Server Stopped", "The current server has been stopped")
+    else:
+        tk.messagebox.showerror("Error", "No server running")
+
+
+
 def configureSteamVR():
     """Configures the SteamVR settings to run in headless mode."""
     try:
@@ -565,10 +634,12 @@ if __name__ == "__main__":
     fileMenu = tk.Menu(menu, tearoff=False)
     trackerMenu = tk.Menu(menu, tearoff=False)
     vrMenu = tk.Menu(menu, tearoff=False)
+    serverMenu = tk.Menu(menu, tearoff=False)
 
     # Add tabs to Menu
     menu.add_cascade(label="File", menu=fileMenu)
     menu.add_cascade(label="Trackers", menu=trackerMenu)
+    menu.add_cascade(label="Server", menu=serverMenu)
     menu.add_cascade(label="SteamVR", menu=vrMenu)
 
     # Add subtabs to File
@@ -582,6 +653,10 @@ if __name__ == "__main__":
     trackerMenu.add_command(
         label="Manage Trackers", command=lambda: manage_trackers(database)
     )
+
+    # Add subtabs to Server
+    serverMenu.add_command(label="Start Server", command=lambda: createServerDialog(root))
+    serverMenu.add_command(label="Stop Server", command=stopServer)
 
     # Add subtabs to vrMenu
     vrMenu.add_command(label="Configure", command=configureSteamVR)
@@ -675,7 +750,11 @@ if __name__ == "__main__":
     trackerPosition = Thread(
         target=trackerPositionThread, daemon=False
     )
+
+    server = Thread(target=serverThread)
+
     trackerPosition.start()
+    server.start()
 
     root.mainloop()
 
