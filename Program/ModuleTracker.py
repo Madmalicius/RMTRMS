@@ -585,8 +585,8 @@ if __name__ == "__main__":
     )
 
     # Add subtabs to vrMenu
-    vrMenu.add_command(label="Configure", command=lambda: configureSteamVR)
-    vrMenu.add_command(label="Restore", command=lambda: restoreSteamVR)
+    vrMenu.add_command(label="Configure", command=configureSteamVR)
+    vrMenu.add_command(label="Restore", command=restoreSteamVR)
 
     # Add help & About buttons
     menu.add_command(
@@ -595,6 +595,7 @@ if __name__ == "__main__":
             "https://github.com/Madmalicius/RMTRMS/wiki/For-Users#using-the-gui"
         ),
     )
+    menu.add_command(label="Report Issue", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/issues/new"))
     menu.add_command(
         label="About",
         command=lambda: webbrowser.open_new_tab(
