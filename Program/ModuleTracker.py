@@ -686,7 +686,7 @@ if __name__ == "__main__":
             "https://github.com/Madmalicius/RMTRMS/wiki/For-Users#using-the-gui"
         ),
     )
-    helpMenu.add_command(label="Report Issue", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/issues/new"))
+    helpMenu.add_command(label="Report Issue", command=lambda: webbrowser.open_new_tab("https://github.com/Madmalicius/RMTRMS/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D"))
     helpMenu.add_command(
         label="About",
         command=lambda: webbrowser.open_new_tab(
