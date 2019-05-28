@@ -38,6 +38,7 @@ hltTrackerActive = StringVar()
 selectedTracker = StringVar()
 checkButtonStatus = IntVar()
 updateThreadListFlag = False
+exitProgramFlag = False
 
 # Variables for tracker window
 hltTrackerActiveInManager = StringVar()
@@ -60,11 +61,13 @@ class DatabaseDialog:
         self.top.title("Database Error")
         self.top.grab_set()
         self.top.attributes('-topmost', 'true')
+        self.top.protocol("WM_DELETE_WINDOW", self.cancel)
 
-        Label(self.top, text="No database found. \nPlease create a new,\n or open an existing database.").grid(columnspan=2, padx=20, pady=10)
+        Label(self.top, text="No database found. \nPlease create a new,\n or open an existing database.\nDatabase type must be SQLite.").grid(columnspan=3, padx=20, pady=10)
 
         Button(self.top, text="Create", command=self.createNew).grid(row=1, padx=20, pady=10, sticky=E)
         Button(self.top, text="Open", command=self.openExisting).grid(row=1, column=1, padx=20, pady=10, sticky=W)
+        Button(self.top, text="Cancel", command=self.cancel).grid(row=1, column=2, padx=20, pady=10, sticky=E)
     
     def createNew(self):
         new_database()
@@ -75,6 +78,11 @@ class DatabaseDialog:
         open_database()
         if os.path.isfile(databasePath):
             self.top.destroy()
+    
+    def cancel(self):
+        global exitProgramFlag
+        exitProgramFlag = True
+        self.top.destroy()
 
 
 class StartServerDialog:
@@ -644,6 +652,8 @@ if __name__ == "__main__":
     while not (os.path.isfile(databasePath) and databasePath.endswith(".db")):
         databaseErrorWindow = DatabaseDialog(root)
         root.wait_window(databaseErrorWindow.top)
+        if exitProgramFlag:
+            exit()
 
     try:
         database = Database(databasePath, vr=True)
@@ -804,5 +814,4 @@ if __name__ == "__main__":
     if serverHandle:
         if serverHandle.isAlive():
             stopServer()
-    
     
