@@ -574,17 +574,8 @@ def trackerPositionThread():
 
 def serverThread():
     """Thread function: Controls connection to server"""
-<<<<<<< HEAD
-    global serverObject, hostIp, port, databasePath, startServerFlag
-    while threading.main_thread().is_alive():
-        if startServerFlag:
-            server = Server(databasePath, hostIp.get(), int(port.get()))
-            serverObject = server
-            server.start()
-=======
     global server, hostIp, port, databasePath
     server = Server(databasePath, hostIp.get(), int(port.get()))
->>>>>>> Fix start and stop server functionality
 
     server.start()
 
@@ -804,21 +795,10 @@ if __name__ == "__main__":
         target=trackerPositionThread, daemon=False
     )
 
-<<<<<<< HEAD
-    server = Thread(target=serverThread, daemon=True)
-
-=======
->>>>>>> Fix start and stop server functionality
     trackerPosition.start()
 
     root.mainloop()
 
-<<<<<<< HEAD
-    if serverObject:
-        serverObject.stop()
-
-    database.db.close()
-=======
     database.db.close()
 
     if serverHandle:
@@ -826,4 +806,3 @@ if __name__ == "__main__":
             stopServer()
     
     
->>>>>>> Fix start and stop server functionality
