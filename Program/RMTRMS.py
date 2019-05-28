@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error as sqliteError
 import bottle
+import threading
 import triad_openvr
 from openvr import OpenVRError
 
@@ -500,8 +501,11 @@ class Server:
     def stop(self):
         """Stop the server
         """
+        self.server.stop()
         self._app.close()
-        self._database.close()
+
+    def stop_thread(self):
+        threading.Thread(target=self.stop, daemon=True).start()
 
     def get_module(self, module_name=None):
         """Return the desired module's tracker and position information

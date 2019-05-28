@@ -11,6 +11,7 @@ from RMTRMS import *
 import os
 import webbrowser
 import sys
+import socket
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/SteamVR")
@@ -46,8 +47,8 @@ newName = StringVar()
 # Variables for server connection
 hostIp = StringVar()
 port = StringVar()
-startServerFlag = False
-serverObject = None
+serverHandle = None
+server = None
 
 trackerArr = []
 trackerNameArr = []
@@ -100,17 +101,28 @@ class StartServerDialog:
 
 
     def startServer(self):
-        global startServerFlag, hostIp, port
-        if not startServerFlag:
-            startServerFlag = True
+        global serverHandle, hostIp, port
+        if serverHandle == None:
+            serverHandle = Thread(target=serverThread, daemon=False)
+            serverHandle.start()
             self.close()
-    
+        elif not serverHandle.isAlive():
+            serverHandle = Thread(target=serverThread, daemon=False)
+            serverHandle.start()
+            self.close()
+
     def enableStartBtn(self, *args):
-        global startServerFlag
-        if not startServerFlag and (hostIp.get() or port.get()):
-            self.startButton.config(state=NORMAL)
+        global serverHandle
+        if serverHandle:
+            if not serverHandle.isAlive() and (hostIp.get() and port.get()):
+                self.startButton.config(state=NORMAL)
+            else:
+                self.startButton.config(state=DISABLED)
         else:
-            self.startButton.config(state=DISABLED)
+            if hostIp.get() and port.get():
+                self.startButton.config(state=NORMAL)
+            else:
+                self.startButton.config(state=DISABLED)
 
     def close(self):
         hostIp.trace_remove("write", self.hostIpTrace)
@@ -118,11 +130,15 @@ class StartServerDialog:
         self.top.destroy()
 
 def createServerDialog(root):
-    if not startServerFlag:
+    if serverHandle:
+        if not serverHandle.isAlive():
+            serverDialog = StartServerDialog(root)
+            root.wait_window(serverDialog.top)
+        else:
+            tk.messagebox.showwarning("Server Open", "A server is already open. Close the current server to make a new connection")
+    else:
         serverDialog = StartServerDialog(root)
         root.wait_window(serverDialog.top)
-    else:
-        tk.messagebox.showwarning("Server Open", "A server is already open. Close the current server to make a new connection")
 
 def refresh_database():
     global database, databasePath, moduleList
@@ -558,19 +574,39 @@ def trackerPositionThread():
 
 def serverThread():
     """Thread function: Controls connection to server"""
+<<<<<<< HEAD
     global serverObject, hostIp, port, databasePath, startServerFlag
     while threading.main_thread().is_alive():
         if startServerFlag:
             server = Server(databasePath, hostIp.get(), int(port.get()))
             serverObject = server
             server.start()
+=======
+    global server, hostIp, port, databasePath
+    server = Server(databasePath, hostIp.get(), int(port.get()))
+>>>>>>> Fix start and stop server functionality
 
+    server.start()
+
+    server._database.db.close()
+    
 
 def stopServer():
-    global serverObject, startServerFlag
-    if startServerFlag:
-        startServerFlag = False
-        serverObject.stop()
+    global server
+    server.stop_thread()
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # if hostIp.get() == "0.0.0.0":
+    #     sock.connect(('localhost', int(port.get())))
+    # else:
+    #     sock.connect((hostIp.get(), int(port.get())))
+    # sock.send(b'GET /stop')
+    # sock.close()
+
+
+def stopServerButton():
+    global serverHandle
+    if serverHandle.isAlive():
+        stopServer()
         tk.messagebox.showinfo("Server Stopped", "The current server has been stopped")
     else:
         tk.messagebox.showerror("Error", "No server running")
@@ -673,7 +709,7 @@ if __name__ == "__main__":
 
     # Add subtabs to Server
     serverMenu.add_command(label="Start Server", command=lambda: createServerDialog(root))
-    serverMenu.add_command(label="Stop Server", command=stopServer)
+    serverMenu.add_command(label="Stop Server", command=stopServerButton)
 
     # Add subtabs to vrMenu
     vrMenu.add_command(label="Configure", command=configureSteamVR)
@@ -768,14 +804,26 @@ if __name__ == "__main__":
         target=trackerPositionThread, daemon=False
     )
 
+<<<<<<< HEAD
     server = Thread(target=serverThread, daemon=True)
 
+=======
+>>>>>>> Fix start and stop server functionality
     trackerPosition.start()
-    server.start()
 
     root.mainloop()
 
+<<<<<<< HEAD
     if serverObject:
         serverObject.stop()
 
     database.db.close()
+=======
+    database.db.close()
+
+    if serverHandle:
+        if serverHandle.isAlive():
+            stopServer()
+    
+    
+>>>>>>> Fix start and stop server functionality
