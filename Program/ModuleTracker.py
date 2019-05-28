@@ -144,7 +144,7 @@ def createServerDialog(root):
             serverDialog = StartServerDialog(root)
             root.wait_window(serverDialog.top)
         else:
-            tk.messagebox.showwarning("Server Open", "A server is already open. Close the current server to make a new connection")
+            tk.messagebox.showwarning("Server Open", "A server is already open. Close the current server to make a new connection. If you are using a browser, please refresh the page.")
     else:
         serverDialog = StartServerDialog(root)
         root.wait_window(serverDialog.top)
