@@ -12,6 +12,7 @@ import os
 import webbrowser
 import sys
 import socket
+from sys import exit
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/Database")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/SteamVR")
