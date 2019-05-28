@@ -70,14 +70,14 @@ class DatabaseDialog:
         Button(self.top, text="Cancel", command=self.cancel).grid(row=1, column=2, padx=20, pady=10, sticky=E)
     
     def createNew(self):
+        self.top.destroy()
         new_database()
-        if os.path.isfile(databasePath):
-            self.top.destroy()
+
 
     def openExisting(self):
+        self.top.destroy()
         open_database()
-        if os.path.isfile(databasePath):
-            self.top.destroy()
+
     
     def cancel(self):
         global exitProgramFlag
