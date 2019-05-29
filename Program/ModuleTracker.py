@@ -33,7 +33,7 @@ if hasattr(sys, "frozen"):
     base_path = getattr(sys, '_MEIPASS', False)
     icon = os.path.join(base_path, icon)
 
-root.iconbitmap(icon)
+root.iconbitmap(default=icon)
 
 root.title("Module Manager")
 root.config(bg=bgColor, bd=5)
