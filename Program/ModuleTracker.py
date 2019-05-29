@@ -244,6 +244,7 @@ def refresh_trackers(triggerWarning=False):
                 hltTrackerActive.set("Active")
             else:
                 hltTrackerActive.set("Inactive")
+
     trackerNameArr.sort()
 
     trackerDropdown["menu"].delete(0, "end")
@@ -253,7 +254,14 @@ def refresh_trackers(triggerWarning=False):
         )
 
 
+def refresh_all():
+    """Reloads modules and trackers."""
+    refresh_modules()
+    refresh_trackers(True)
+
+
 def refresh_modules():
+    """Reloads the modules from the database."""
     global moduleList
     moduleList.delete(0,END)
     modules = database.get_module_list()
@@ -271,7 +279,7 @@ def manage_trackers(db):
 
     # Create window
     trackerWindow = tk.Toplevel(root, bg=bgColor, bd=5)
-    trackerWindow.title("Manage Trackers")
+    trackerWindow.title("Tracker Manager")
     trackerWindow.grab_set()
 
     # Tracker list label
@@ -685,14 +693,13 @@ if __name__ == "__main__":
     root.config(menu=menu)
 
     fileMenu = tk.Menu(menu, tearoff=False)
-    trackerMenu = tk.Menu(menu, tearoff=False)
     vrMenu = tk.Menu(menu, tearoff=False)
     serverMenu = tk.Menu(menu, tearoff=False)
     helpMenu = tk.Menu(menu, tearoff=False)
 
     # Add tabs to Menu
     menu.add_cascade(label="File", menu=fileMenu)
-    menu.add_cascade(label="Trackers", menu=trackerMenu)
+    menu.add_command(label="Trackers", command=lambda: manage_trackers(database))
     menu.add_cascade(label="Server", menu=serverMenu)
     menu.add_cascade(label="SteamVR", menu=vrMenu)
     menu.add_cascade(label="Help", menu=helpMenu)
@@ -700,14 +707,6 @@ if __name__ == "__main__":
     # Add subtabs to File
     fileMenu.add_command(label="Create database", command=new_database)
     fileMenu.add_command(label="Open database", command=open_database)
-
-    # Add subtabs to Trackers
-    trackerMenu.add_command(
-        label="Refresh", command=lambda: refresh_trackers(True)
-    )
-    trackerMenu.add_command(
-        label="Manage Trackers", command=lambda: manage_trackers(database)
-    )
 
     # Add subtabs to Server
     serverMenu.add_command(label="Start Server", command=lambda: createServerDialog(root))
@@ -749,7 +748,7 @@ if __name__ == "__main__":
     refresh_modules()
 
     # Refresh Module list
-    refreshModules = tk.Button(root, text="↻", command=lambda: refresh_modules())
+    refreshModules = tk.Button(root, text="↻", command=lambda: refresh_all())
     refreshModules.grid(row=1, column=1, sticky=S+E, padx=10)
 
     # Highlighted module label
