@@ -20,9 +20,20 @@ import createDatabase
 from configure import configure, SteamVRRunningError as configureError
 from restore import restore, SteamVRRunningError as restoreError
 
+
 bgColor = "#C5CAE9"
 
 root = tk.Tk()
+icon = "SDU_Logo.ico"
+
+# https://stackoverflow.com/a/44438174
+if hasattr(sys, "frozen"):
+    icon = os.path.join(os.path.dirname(__file__), icon)
+    print(icon)
+    base_path = getattr(sys, '_MEIPASS', False)
+    icon = os.path.join(base_path, icon)
+
+root.iconbitmap(icon)
 
 root.title("Module Manager")
 root.config(bg=bgColor, bd=5)
