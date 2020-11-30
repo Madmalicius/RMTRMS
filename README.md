@@ -4,7 +4,7 @@ This repository contains the source code for a module manager for reconfigurable
 
 Instructions for how to use the software is in the [wiki](https://github.com/Madmalicius/RMTRMS/wiki/).
 
-The report that accompanies this repository can be found [here](TODO)
+The report that accompanies this repository can be found [here](report/Real_Time_Module_Tracking_for_Reconfigurable_Manufacturing_Systems.pdf)
 
 Created by:
 
